@@ -1,16 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --text: #565e74;
-  --text-h: #0b1c30;
+  /* Superfícies e texto */
   --bg: #f8f9ff;
-  --border: #dfe6f1;
   --surface: #ffffff;
+  --surface-soft: #eff4ff;
+  --border: #dfe6f1;
+  --border-strong: #c9d1e2;
+  --text-h: #0b1c30;
+  --text: #565e74;
+  --text-muted: #6b6e80;
   /* Escala única da marca: preenchimentos usam --brand, textos e links usam --brand-ink. */
   --brand: #1d4ed8;
   --brand-hover: #1e40af;
   --brand-ink: #0037b0;
   --brand-soft: #eff4ff;
+  --brand-tint: #e6efff;
+  --brand-border: #9fc3ff;
+  /* Status */
+  --good-text: #047857;
+  --good-bg: #e7f7ef;
+  --warning-text: #92400e;
+  --warning-bg: #fef3c7;
+  --critical-text: #9a3412;
+  --critical-bg: #ffedd5;
+  --error-text: #9f1c1c;
+  --error-bg: #fdecec;
+  /* Gráficos */
+  --chart-level: #1d4ed8;
+  --chart-rain: #4f7fe8;
+  --chart-grid: #e6ebf3;
+  --chart-axis: #747686;
+  --chart-attention: #d97706;
+  --chart-alert: #c2410c;
+  --chart-now: #0b1c30;
+  --shadow: 0 8px 20px rgb(11 28 48 / 12%);
   --sans: 'Plus Jakarta Sans', Arial, sans-serif;
 
   font: 16px/1.45 var(--sans);
@@ -21,6 +45,75 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0a1120;
+    --surface: #111a2c;
+    --surface-soft: #16213a;
+    --border: #243250;
+    --border-strong: #3a4a6b;
+    --text-h: #e6ecf7;
+    --text: #a9b4c9;
+    --text-muted: #8591aa;
+    --brand: #2f5fe0;
+    --brand-hover: #4471ee;
+    --brand-ink: #9db9ff;
+    --brand-soft: #16213a;
+    --brand-tint: #1b2c52;
+    --brand-border: #4466a8;
+    --good-text: #6ee7b7;
+    --good-bg: #0f2e25;
+    --warning-text: #fcd34d;
+    --warning-bg: #33260a;
+    --critical-text: #fdba74;
+    --critical-bg: #3a1c0b;
+    --error-text: #fca5a5;
+    --error-bg: #3b1515;
+    --chart-level: #7aa2ff;
+    --chart-rain: #4f7fe8;
+    --chart-grid: #22304b;
+    --chart-axis: #8591aa;
+    --chart-attention: #f59e0b;
+    --chart-alert: #fb7a3c;
+    --chart-now: #c9d4ea;
+    --shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a1120;
+  --surface: #111a2c;
+  --surface-soft: #16213a;
+  --border: #243250;
+  --border-strong: #3a4a6b;
+  --text-h: #e6ecf7;
+  --text: #a9b4c9;
+  --text-muted: #8591aa;
+  --brand: #2f5fe0;
+  --brand-hover: #4471ee;
+  --brand-ink: #9db9ff;
+  --brand-soft: #16213a;
+  --brand-tint: #1b2c52;
+  --brand-border: #4466a8;
+  --good-text: #6ee7b7;
+  --good-bg: #0f2e25;
+  --warning-text: #fcd34d;
+  --warning-bg: #33260a;
+  --critical-text: #fdba74;
+  --critical-bg: #3a1c0b;
+  --error-text: #fca5a5;
+  --error-bg: #3b1515;
+  --chart-level: #7aa2ff;
+  --chart-rain: #4f7fe8;
+  --chart-grid: #22304b;
+  --chart-axis: #8591aa;
+  --chart-attention: #f59e0b;
+  --chart-alert: #fb7a3c;
+  --chart-now: #c9d4ea;
+  --shadow: 0 8px 24px rgb(0 0 0 / 45%);
 }
 
 * { box-sizing: border-box; }

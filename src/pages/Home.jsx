@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ThemeToggle from '../components/ThemeToggle';
 import mailIcon from '../assets/figma/mail.svg';
 import lockIcon from '../assets/figma/lock.svg';
 import eyeIcon from '../assets/figma/eye.svg';
@@ -12,6 +13,7 @@ function Home() {
   const [notice, setNotice] = useState('');
   return (
     <main className="login-page">
+      <ThemeToggle />
       <section className="login-shell" aria-labelledby="login-title">
         <header className="brand-intro">
           <div className="mare-mark" aria-hidden="true"><span className="mare-orb" /><span className="mare-wave mare-wave--one" /><span className="mare-wave mare-wave--two" /></div>

@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ThemeToggle from '../components/ThemeToggle';
 import storeIcon from '../assets/figma/register/store.svg';
 import documentIcon from '../assets/figma/register/document.svg';
 import locationIcon from '../assets/figma/register/location.svg';
@@ -56,7 +57,7 @@ export default function Register() {
     navigate('/estabelecimento');
   };
 
-  return <main className="login-page register-page"><section className="login-shell" aria-labelledby="register-title">
+  return <main className="login-page register-page"><ThemeToggle /><section className="login-shell" aria-labelledby="register-title">
     <BrandHeader step={step} />
     <section className="login-card register-card"><Stepper step={step} />
       {step === 1 ? <form className="register-form" onSubmit={(event) => { event.preventDefault(); setStep(2); }}>

@@ -89,10 +89,10 @@ export default function TideChart() {
             <CartesianGrid vertical={false} stroke={COLORS.grid} />
             {xAxis}
             <YAxis domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} width={Y_AXIS_WIDTH} tick={{ fontSize: 11, fill: COLORS.axis }} tickFormatter={(value) => `${value} m`} tickLine={false} axisLine={false} />
-            <ReferenceLine y={tide.attentionLevel} stroke={COLORS.attention} strokeWidth={1.5} strokeDasharray="5 4" />
-            <ReferenceLine y={tide.alertLevel} stroke={COLORS.alert} strokeWidth={1.5} strokeDasharray="8 3" />
-            {now && <ReferenceLine x={now.time} stroke={COLORS.now} strokeOpacity={0.5} label={{ value: 'Agora', position: 'insideTopRight', fill: COLORS.now, fontSize: 10 }} />}
-            {pinnedPoint && <ReferenceLine x={pinnedPoint.time} stroke={COLORS.level} strokeWidth={2} />}
+            <ReferenceLine className="ref-attention" y={tide.attentionLevel} stroke={COLORS.attention} strokeWidth={1.5} strokeDasharray="5 4" />
+            <ReferenceLine className="ref-alert" y={tide.alertLevel} stroke={COLORS.alert} strokeWidth={1.5} strokeDasharray="8 3" />
+            {now && <ReferenceLine className="ref-now" x={now.time} stroke={COLORS.now} strokeOpacity={0.5} label={{ value: 'Agora', position: 'insideTopRight', fill: COLORS.now, fontSize: 10 }} />}
+            {pinnedPoint && <ReferenceLine className="ref-pinned" x={pinnedPoint.time} stroke={COLORS.level} strokeWidth={2} />}
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: COLORS.axis, strokeDasharray: '3 3' }} isAnimationActive={false} />
             <Area type="monotone" dataKey="level" name="Nível" stroke={COLORS.level} strokeWidth={2} fill="url(#tide-fill)" activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }} animationDuration={500} />
             {peak && <ReferenceDot x={peak.time} y={peak.level} r={5} fill={COLORS.level} stroke="#fff" strokeWidth={2} label={{ value: `Pico ${formatLevel(peak.level)}`, position: 'bottom', fill: '#0b1c30', fontSize: 11, fontWeight: 600, offset: 10 }} />}
