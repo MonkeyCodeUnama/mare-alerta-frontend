@@ -38,6 +38,7 @@ export default function TideChart() {
   const [range, setRange] = useState('12h');
   const [pinned, setPinned] = useState(null);
   const [showTable, setShowTable] = useState(false);
+  const [cursor, setCursor] = useState(null);
 
   const data = useMemo(() => {
     const { from, to } = RANGES.find((item) => item.id === range);
@@ -50,16 +51,37 @@ export default function TideChart() {
   const pinnedPoint = data.find((point) => point.time === pinned);
   const tickStep = range === '24h' ? 3 : range === '12h' ? 2 : 1;
   const ticks = data.filter((point) => Number.isInteger(point.hour) && point.hour % tickStep === 0).map((point) => point.time);
+  const cursorPoint = cursor === null ? null : data[cursor];
+  const nowIndex = data.indexOf(now);
+  const togglePin = (point) => setPinned((current) => current === point.time ? null : point.time);
+  // Navegação por teclado equivalente ao mouse: setas percorrem os horários, Enter/Espaço fixam, Esc limpa.
+  const onKeyDown = (event) => {
+    const last = data.length - 1;
+    const steps = { ArrowRight: 1, ArrowLeft: -1, ArrowUp: 3, ArrowDown: -3 };
+    let next = null;
+    if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = last;
+    else if (event.key in steps) next = cursor === null ? nowIndex : cursor + steps[event.key];
+    if (next !== null) {
+      event.preventDefault();
+      setCursor(Math.min(last, Math.max(0, next)));
+    } else if ((event.key === 'Enter' || event.key === ' ') && cursorPoint) {
+      event.preventDefault();
+      togglePin(cursorPoint);
+    } else if (event.key === 'Escape') {
+      setPinned(null);
+    }
+  };
   const pin = (state) => {
     const point = data[Number(state?.activeTooltipIndex)];
-    if (point) setPinned((current) => current === point.time ? null : point.time);
+    if (point) togglePin(point);
   };
   const xAxis = <XAxis dataKey="time" scale="band" ticks={ticks} interval="preserveStartEnd" minTickGap={16} tick={{ fontSize: 11, fill: COLORS.axis }} tickLine={false} axisLine={{ stroke: COLORS.grid }} />;
 
   return <div className="tide-panel">
     <div className="tide-controls">
       <div className="segmented" role="radiogroup" aria-label="Período do gráfico">
-        {RANGES.map((item) => <button type="button" role="radio" aria-checked={range === item.id} className={range === item.id ? 'active' : ''} onClick={() => setRange(item.id)} key={item.id}>{item.label}</button>)}
+        {RANGES.map((item) => <button type="button" role="radio" aria-checked={range === item.id} className={range === item.id ? 'active' : ''} onClick={() => { setRange(item.id); setCursor(null); }} key={item.id}>{item.label}</button>)}
       </div>
       <div className="tide-legend" aria-hidden="true">
         <span><i className="key key--level" /> Nível (m)</span>
@@ -77,9 +99,9 @@ export default function TideChart() {
       </table>
     </div> : <>
       <p className="tide-chart-title">Nível da maré (m)</p>
-      <div className="tide-chart-area" role="img" aria-label={`Nível da maré de ${data[0].time} a ${data.at(-1).time}. Pico de ${formatLevel(tide.high.level)} às ${tide.high.time}. Clique em um horário para fixar a leitura.`}>
+      <div className="tide-chart-area" tabIndex={0} role="group" aria-roledescription="gráfico" aria-label={`Nível da maré de ${data[0].time} a ${data.at(-1).time}. Pico de ${formatLevel(tide.high.level)} às ${tide.high.time}.`} aria-describedby="tide-chart-help" onKeyDown={onKeyDown} onBlur={() => setCursor(null)}>
         <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={data} syncId="tide" margin={CHART_MARGIN} onClick={pin} style={{ cursor: 'pointer' }}>
+          <AreaChart accessibilityLayer={false} data={data} syncId="tide" margin={CHART_MARGIN} onClick={pin} style={{ cursor: 'pointer' }}>
             <defs>
               <linearGradient id="tide-fill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={COLORS.level} stopOpacity={0.22} />
@@ -92,9 +114,10 @@ export default function TideChart() {
             <ReferenceLine className="ref-attention" y={tide.attentionLevel} stroke={COLORS.attention} strokeWidth={1.5} strokeDasharray="5 4" />
             <ReferenceLine className="ref-alert" y={tide.alertLevel} stroke={COLORS.alert} strokeWidth={1.5} strokeDasharray="8 3" />
             {now && <ReferenceLine className="ref-now" x={now.time} stroke={COLORS.now} strokeOpacity={0.5} label={{ value: 'Agora', position: 'insideTopRight', fill: COLORS.now, fontSize: 10 }} />}
+            {cursorPoint && <ReferenceLine className="ref-cursor" x={cursorPoint.time} stroke={COLORS.axis} strokeDasharray="3 3" />}
             {pinnedPoint && <ReferenceLine className="ref-pinned" x={pinnedPoint.time} stroke={COLORS.level} strokeWidth={2} />}
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: COLORS.axis, strokeDasharray: '3 3' }} isAnimationActive={false} />
-            <Area type="monotone" dataKey="level" name="Nível" stroke={COLORS.level} strokeWidth={2} fill="url(#tide-fill)" activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }} animationDuration={500} />
+            <Area type="monotone" dataKey="level" name="Nível" stroke={COLORS.level} strokeWidth={2} fill="url(#tide-fill)" activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }} isAnimationActive={false} />
             {peak && <ReferenceDot x={peak.time} y={peak.level} r={5} fill={COLORS.level} stroke="#fff" strokeWidth={2} label={{ value: `Pico ${formatLevel(peak.level)}`, position: 'bottom', fill: '#0b1c30', fontSize: 11, fontWeight: 600, offset: 10 }} />}
           </AreaChart>
         </ResponsiveContainer>
@@ -102,20 +125,23 @@ export default function TideChart() {
       <p className="tide-chart-title">Chuva prevista (mm/h)</p>
       <div className="tide-chart-area" aria-hidden="true">
         <ResponsiveContainer width="100%" height={90}>
-          <BarChart data={data} syncId="tide" margin={CHART_MARGIN} onClick={pin} style={{ cursor: 'pointer' }}>
+          <BarChart accessibilityLayer={false} data={data} syncId="tide" margin={CHART_MARGIN} onClick={pin} style={{ cursor: 'pointer' }}>
             <CartesianGrid vertical={false} stroke={COLORS.grid} />
             {xAxis}
             <YAxis domain={[0, 10]} ticks={[0, 5, 10]} width={Y_AXIS_WIDTH} tick={{ fontSize: 11, fill: COLORS.axis }} tickLine={false} axisLine={false} />
             <Tooltip content={() => null} cursor={{ fill: 'rgb(29 78 216 / 6%)' }} isAnimationActive={false} />
-            <Bar dataKey="rain" name="Chuva" fill={COLORS.rain} radius={[4, 4, 0, 0]} maxBarSize={14} animationDuration={500} />
+            <Bar dataKey="rain" name="Chuva" fill={COLORS.rain} radius={[4, 4, 0, 0]} maxBarSize={14} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>
       <div className="tide-pinned" aria-live="polite">
-        {pinnedPoint
-          ? <><span className="tide-pinned-label">Horário fixado</span><Readout point={pinnedPoint} /><button type="button" className="link-button" onClick={() => setPinned(null)}>Limpar</button></>
-          : <><span className="tide-pinned-hint">Passe o cursor ou toque para ver os valores; clique para fixar um horário.</span><span className="tide-now">Agora {clockOf(tide.readingHour)} · <b>{formatLevel(tide.current)}</b></span></>}
+        {cursorPoint
+          ? <><span className="tide-pinned-label">{cursorPoint.time === pinned ? 'Horário fixado' : 'Horário em foco'}</span><Readout point={cursorPoint} /></>
+          : pinnedPoint
+            ? <><span className="tide-pinned-label">Horário fixado</span><Readout point={pinnedPoint} /><button type="button" className="link-button" onClick={() => setPinned(null)}>Limpar</button></>
+            : <span className="tide-now">Agora {clockOf(tide.readingHour)} · <b>{formatLevel(tide.current)}</b></span>}
       </div>
+      <p className="tide-pinned-hint" id="tide-chart-help">Passe o cursor ou toque para ver os valores e clique para fixar um horário. No teclado, use as setas para percorrer, Enter para fixar e Esc para limpar.</p>
     </>}
   </div>;
 }

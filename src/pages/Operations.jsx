@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import map from '../assets/figma/operations/map.png';
-import { formatDuration, formatLevel, store, tide } from '../data/tide';
+import ExternalLink from '../components/ExternalLink';
+import { links } from '../config';
+import { formatDuration, formatLevel, tide } from '../data/tide';
+import { NEIGHBORHOODS, useStore } from '../state/store';
 
 const phases = [
   { id: 'antes', tab: 'Antes da Cheia', title: `ANTES DA CHEIA (JANELA CRÍTICA: ATÉ ${tide.safeUntil})`, priority: 'Prioridade alta', tasks: [
@@ -49,7 +52,7 @@ export function Checklist() {
   return <AppShell active="/checklist"><div className="ops-content">
     <div className="page-title">
       <div><h1>Checklist de Prevenção Operacional</h1><p>Protocolo direto para proteção contra avaria em piso e contenção rápida.</p></div>
-      <a className="button" href="https://wa.me/" target="_blank" rel="noreferrer">WhatsApp Equipe</a>
+      <ExternalLink href={links.whatsappTeam}>WhatsApp Equipe</ExternalLink>
       <button type="button" className="primary">＋ Nova Tarefa</button>
     </div>
     <div className="readiness">
@@ -69,10 +72,10 @@ export function Checklist() {
 }
 
 const alerts = [
-  { status: 'VIGENTE AGORA', category: 'Maré Alta', when: 'Hoje às 11:15', source: 'Defesa Civil Municipal', title: `Maré de sizígia (${formatLevel(tide.high.level)}) e chuva convectiva às ${tide.high.time}`, text: 'A incidência de chuva deve se intensificar no fim da tarde. Regiões da Doca, Reduto e Ver-o-Peso têm risco de retenção nas galerias pluviais.', peak: tide.high.level, rain: tide.rain.peak },
-  { status: 'FINALIZADO • NORMALIZADO', category: 'Maré Alta', when: '28 de março, 15:30', source: 'Defesa Civil Municipal', title: 'Pico de maré de 3,10 m superado sem transbordamento na Visconde de Souza Franco', text: 'As comportas da Doca escoaram sem refluxo nas calçadas comerciais vizinhas. Comércio manteve operação segura.', peak: 3.1, rain: 12 },
-  { status: 'REGISTRO HISTÓRICO • CHUVA SEVERA', category: 'Chuva Torrencial', when: '14 de março, 17:05', source: 'Defesa Civil Municipal', title: 'Chuva severa de 65 mm com maré de 3,62 m — barreiras acionadas', text: 'Transbordamento pontual na Rua Gaspar Vianna e Av. Portugal. A antecipação permitiu zero perdas de estoque nas 31 lojas cadastradas.', peak: 3.62, rain: 65 },
-  { status: 'REDE COMUNITÁRIA', category: 'Comunidade', when: '9 de março, 08:40', source: 'Lojista do Mercado da Carne', title: 'Lâmina de 10 cm no acostamento do Mercado da Carne', text: 'Água restrita à via de veículos. Sem invasão a boxes fechados, mas exigiu cautela no fluxo de descargas de pescado.', peak: 2.95, rain: 18 },
+  { status: 'VIGENTE AGORA', category: 'Maré Alta', when: 'Hoje às 11:15', source: 'Defesa Civil Municipal', title: `Maré de sizígia (${formatLevel(tide.high.level)}) e chuva convectiva às ${tide.high.time}`, text: 'A incidência de chuva deve se intensificar no fim da tarde. Regiões da Doca, Reduto e Ver-o-Peso têm risco de retenção nas galerias pluviais.', peak: tide.high.level, rain: `até ${tide.rain.peak} mm/h (previsão)` },
+  { status: 'FINALIZADO • NORMALIZADO', category: 'Maré Alta', when: '28 de março, 15:30', source: 'Defesa Civil Municipal', title: 'Pico de maré de 3,10 m superado sem transbordamento na Visconde de Souza Franco', text: 'As comportas da Doca escoaram sem refluxo nas calçadas comerciais vizinhas. Comércio manteve operação segura.', peak: 3.1, rain: '12 mm acumulados' },
+  { status: 'REGISTRO HISTÓRICO • CHUVA SEVERA', category: 'Chuva Torrencial', when: '14 de março, 17:05', source: 'Defesa Civil Municipal', title: 'Chuva severa de 65 mm com maré de 3,62 m — barreiras acionadas', text: 'Transbordamento pontual na Rua Gaspar Vianna e Av. Portugal. A antecipação permitiu zero perdas de estoque nas 31 lojas cadastradas.', peak: 3.62, rain: '65 mm acumulados' },
+  { status: 'REDE COMUNITÁRIA', category: 'Comunidade', when: '9 de março, 08:40', source: 'Lojista do Mercado da Carne', title: 'Lâmina de 10 cm no acostamento do Mercado da Carne', text: 'Água restrita à via de veículos. Sem invasão a boxes fechados, mas exigiu cautela no fluxo de descargas de pescado.', peak: 2.95, rain: '18 mm acumulados' },
 ];
 const filters = ['Todos', 'Maré Alta', 'Chuva Torrencial', 'Comunidade'];
 
@@ -100,9 +103,9 @@ export function History() {
     <div className="alert-list">{visible.map((alert) => <article className={alert.status === 'VIGENTE AGORA' ? 'current' : ''} key={alert.title}>
       <header><b>{alert.status}</b><span>{alert.when} • {alert.source}</span></header>
       <h3>{alert.title}</h3><p>{alert.text}</p>
-      <footer><span>Pico: <b>{formatLevel(alert.peak)}</b> • Chuva: {alert.rain} mm</span><button type="button" className="link-button" onClick={() => share(alert)}>{shared === alert.title ? 'Copiado ✓' : 'Compartilhar'}</button></footer>
+      <footer><span>Pico: <b>{formatLevel(alert.peak)}</b> • Chuva: {alert.rain}</span><button type="button" className="link-button" onClick={() => share(alert)}>{shared === alert.title ? 'Copiado ✓' : 'Compartilhar'}</button></footer>
     </article>)}</div>
-    <div className="community"><span><b>Rede Comunitária Maré Alerta</b><small>Lojistas do seu quarteirão avisando com antecedência para erguer estoques e fixar comportas.</small></span><a className="button primary" href="https://chat.whatsapp.com/" target="_blank" rel="noreferrer">Entrar no Grupo WhatsApp</a></div>
+    <div className="community"><span><b>Rede Comunitária Maré Alerta</b><small>Lojistas do seu quarteirão avisando com antecedência para erguer estoques e fixar comportas.</small></span><ExternalLink className="button primary" href={links.whatsappGroup}>Entrar no Grupo WhatsApp</ExternalLink></div>
   </div></AppShell>;
 }
 
@@ -150,26 +153,32 @@ const criticalItems = ['Freezer no chão', 'Estoque de secos', 'Caixa registrado
 
 export function Establishment() {
   const navigate = useNavigate();
-  const [type, setType] = useState('Mercado');
-  const [days, setDays] = useState(['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']);
-  const [items, setItems] = useState(['Freezer no chão', 'Estoque de secos', 'Caixa registradora / CPU', 'Fiação baixa']);
-  const toggle = (value, set) => set((state) => state.includes(value) ? state.filter((item) => item !== value) : [...state, value]);
+  const { store, updateStore } = useStore();
+  const [form, setForm] = useState(store);
+  const set = (key) => (event) => setForm((data) => ({ ...data, [key]: event.target.value }));
+  const choose = (key, value) => setForm((data) => ({ ...data, [key]: value }));
+  const toggle = (key, value) => setForm((data) => ({ ...data, [key]: data[key].includes(value) ? data[key].filter((item) => item !== value) : [...data[key], value] }));
+  const save = (event) => {
+    event.preventDefault();
+    updateStore({ ...form, name: form.name.trim() });
+    navigate('/dashboard');
+  };
 
-  return <AppShell active="/estabelecimento"><form className="ops-content establishment" onSubmit={(event) => { event.preventDefault(); navigate('/dashboard'); }}>
+  return <AppShell active="/estabelecimento"><form className="ops-content establishment" onSubmit={save}>
     <div className="setup-progress"><b>Configuração de proteção do ponto</b><i aria-hidden="true" /></div>
     <h1>Conte-nos sobre o seu negócio em Belém</h1>
     <p>Personalizamos alertas de preamar e pontos críticos de alagamento exatamente para a cota da sua rua.</p>
     <section className="form-card"><h2>Identificação do Estabelecimento</h2><p>Seu comércio entra na rede de vizinhos que já reconhecem você.</p>
-      <label>Nome comercial do ponto<input defaultValue={store.name} required /></label>
+      <label>Nome comercial do ponto<input value={form.name} onChange={set('name')} required /></label>
       <b id="tipo-atividade">Tipo de atividade comercial</b>
-      <div className="business-types" role="radiogroup" aria-labelledby="tipo-atividade">{businessTypes.map((item) => <button type="button" role="radio" aria-checked={type === item} className={type === item ? 'active' : ''} onClick={() => setType(item)} key={item}>{item}</button>)}</div>
+      <div className="business-types" role="radiogroup" aria-labelledby="tipo-atividade">{businessTypes.map((item) => <button type="button" role="radio" aria-checked={form.type === item} className={form.type === item ? 'active' : ''} onClick={() => choose('type', item)} key={item}>{item}</button>)}</div>
     </section>
     <section className="form-card map-card"><h2>Localização no Mapa Hidrológico de Belém</h2>
       <div className="map-details">
         <div>
-          <label>Rua / Travessa / Avenida<input defaultValue="Travessa Visconde de Souza Franco (Doca)" /></label>
-          <label>Número<input defaultValue="742" inputMode="numeric" /></label>
-          <label>Bairro em Belém<input defaultValue={`${store.neighborhood} (Bacia do Reduto)`} /></label>
+          <label>Rua / Travessa / Avenida<input value={form.street} onChange={set('street')} placeholder="Ex: Travessa Visconde de Souza Franco" required /></label>
+          <label>Número<input value={form.number} onChange={set('number')} inputMode="numeric" placeholder="Ex: 742" /></label>
+          <label>Bairro em Belém<select value={form.neighborhood} onChange={set('neighborhood')} required>{NEIGHBORHOODS.map((name) => <option key={name}>{name}</option>)}</select></label>
           <aside><b>Análise: Calha da Doca</b><p>Fluxo de águas pluviais durante marés na {tide.station} acima de 3,20 m combinado com chuvas vespertinas.</p></aside>
         </div>
         <img src={map} alt="Mapa hidrológico de Belém com a localização do ponto" />
@@ -177,14 +186,14 @@ export function Establishment() {
     </section>
     <div className="two-cards">
       <section className="form-card"><h2>Horário de Funcionamento</h2><b id="dias">Dias de atendimento</b>
-        <div className="days" role="group" aria-labelledby="dias">{weekDays.map((day) => <button type="button" aria-pressed={days.includes(day)} className={days.includes(day) ? 'active' : ''} onClick={() => toggle(day, setDays)} key={day}>{day}</button>)}</div>
-        <label>Abertura<input type="time" defaultValue="07:30" /></label>
-        <label>Fechamento<input type="time" defaultValue="19:00" /></label>
+        <div className="days" role="group" aria-labelledby="dias">{weekDays.map((day) => <button type="button" aria-pressed={form.days.includes(day)} className={form.days.includes(day) ? 'active' : ''} onClick={() => toggle('days', day)} key={day}>{day}</button>)}</div>
+        <label>Abertura<input type="time" value={form.opening} onChange={set('opening')} /></label>
+        <label>Fechamento<input type="time" value={form.closing} onChange={set('closing')} /></label>
       </section>
       <section className="form-card"><h2>Itens Críticos na Loja</h2>
-        <div className="critical-items">{criticalItems.map((item) => <button type="button" aria-pressed={items.includes(item)} className={items.includes(item) ? 'active' : ''} onClick={() => toggle(item, setItems)} key={item}>{item}{items.includes(item) && ' ✓'}</button>)}</div>
+        <div className="critical-items">{criticalItems.map((item) => <button type="button" aria-pressed={form.criticalItems.includes(item)} className={form.criticalItems.includes(item) ? 'active' : ''} onClick={() => toggle('criticalItems', item)} key={item}>{item}{form.criticalItems.includes(item) && ' ✓'}</button>)}</div>
       </section>
     </div>
-    <div className="save-bar"><span><b>Pronto para conectar seu ponto</b><small>Você poderá adicionar fotos e atualizar contatos a qualquer momento.</small></span><button type="submit" className="primary">Salvar e ver o nível de risco do meu ponto →</button></div>
+    <div className="save-bar"><span><b>Pronto para conectar seu ponto</b><small>Os dados ficam salvos neste navegador e podem ser alterados a qualquer momento.</small></span><button type="submit" className="primary">Salvar e ver o nível de risco do meu ponto →</button></div>
   </form></AppShell>;
 }

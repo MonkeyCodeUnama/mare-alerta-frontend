@@ -531,7 +531,7 @@
 
 .salutation h1 {
   margin:0;
-  color:var(--navy);
+  color:var(--text-h);
   font-size:20px;
   letter-spacing:-.5px;
 }
@@ -595,7 +595,7 @@
 
 .card-heading h2 {
   margin:0;
-  color:var(--navy);
+  color:var(--text-h);
   font-size:16px;
 }
 
@@ -2008,7 +2008,7 @@ button.primary, .button.primary { border-color:var(--brand); color:#fff; backgro
 .ops-sidebar nav a i svg { display:block; }
 .ops-help { display:flex; flex-wrap:wrap; gap:8px; }
 .ops-help b, .ops-help p { width:100%; }
-.ops-user span { flex:1; min-width:0; }
+.ops-user > span:not(.avatar-initials) { flex:1; min-width:0; }
 .ops-logout { color:var(--brand-ink); font-size:11px; font-weight:700; text-decoration:none; }
 .ops-top b { display:inline-flex; align-items:center; min-width:0; white-space:nowrap; }
 .ops-top b i { flex:0 0 auto; width:8px; height:8px; margin-right:6px; border-radius:50%; background:#10b981; }
@@ -2153,3 +2153,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .login-page .theme-toggle { position: fixed; top: 16px; right: 16px; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .map-details > img { filter: brightness(.82) saturate(.9); } }
 :root[data-theme='dark'] .map-details > img { filter: brightness(.82) saturate(.9); }
+
+/* ---- Ajustes da revisão ---- */
+.salutation h1, .card-heading h2 { color: var(--text-h); }
+.dashboard-content .report-card h3 { color: #fff; }
+.avatar-initials { display: grid; flex: 0 0 auto; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--brand-ink); background: var(--brand-tint); font-size: 12px; font-weight: 700; }
+.ops-top .avatar-initials { display: none; }
+@media (max-width: 900px) { .ops-top .avatar-initials { display: grid; } }
+.button:disabled { opacity: .55; cursor: not-allowed; }
+.button:disabled:hover { border-color: var(--border); }
+button.primary:disabled:hover, .button.primary:disabled:hover { background: var(--brand); }
+.tide-pinned-hint { margin: 8px 2px 0; color: var(--text-muted); font-size: 11px; }
+.tide-now { margin-left: 0; }
+.tide-chart-area:focus-visible { outline: none; border-radius: 8px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 35%, transparent); }
+.tide-chart-area .ref-cursor line { stroke: var(--chart-axis); }
+.form-card select { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 6px; outline: 0; background: var(--surface-soft); color: var(--text-h); font-size: 14px; }

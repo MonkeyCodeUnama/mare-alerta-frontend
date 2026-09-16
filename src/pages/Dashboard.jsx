@@ -2,7 +2,8 @@ import { lazy, Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import gauge from '../assets/figma/dashboard/gauge.svg';
-import { formatDuration, formatLevel, store, tide } from '../data/tide';
+import { formatDuration, formatLevel, tide } from '../data/tide';
+import { useStore } from '../state/store';
 
 // O Recharts é pesado; carrega o gráfico em um chunk separado.
 const TideChart = lazy(() => import('../components/TideChart'));
@@ -14,6 +15,8 @@ const actions = [
 ];
 
 export default function Dashboard() {
+  const { store } = useStore();
+  const greeting = store.owner ? `Olá, ${store.owner}!` : 'Olá!';
   const [checked, setChecked] = useState([false, false, false]);
   const [reading, setReading] = useState('Há 3 min');
   const pending = checked.filter((item) => !item).length;
@@ -23,7 +26,7 @@ export default function Dashboard() {
     <div className="dashboard-content">
       <section className="salutation">
         <div className="salutation-icon" aria-hidden="true">♢</div>
-        <div><h1>Painel de Risco Operacional <em>{store.neighborhood}</em></h1><p>Olá, {store.owner}! Cenário sob controle. Margem preventiva recomendada para o final da tarde.</p></div>
+        <div><h1>Painel de Risco Operacional <em>{store.neighborhood}</em></h1><p>{greeting} Cenário sob controle. Margem preventiva recomendada para o final da tarde.</p></div>
         <div className="telemetry" aria-live="polite"><small>Leitura telemétrica</small><b>{tide.reading} • {reading}</b></div>
         <button className="refresh" type="button" aria-label="Atualizar leitura" onClick={() => setReading('Agora')}>↻</button>
       </section>

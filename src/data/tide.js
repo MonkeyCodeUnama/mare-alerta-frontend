@@ -46,8 +46,6 @@ export const tide = {
   wind: '12 nós WNW',
 };
 
-export const store = { name: 'Empório da Maria', owner: 'Maria', neighborhood: 'Umarizal' };
-
 export const formatLevel = (meters) => `${meters.toFixed(2).replace('.', ',')} m`;
 
 const toMinutes = (time) => { const [h, m] = time.split(':').map(Number); return h * 60 + m; };

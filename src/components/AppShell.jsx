@@ -3,7 +3,8 @@ import { ClipboardCheck, FileWarning, Gauge, History, Store } from 'lucide-react
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import avatar from '../assets/figma/dashboard/emporio.jpeg';
-import { formatLevel, store, tide } from '../data/tide';
+import { formatLevel, tide } from '../data/tide';
+import { useStore } from '../state/store';
 
 const navigation = [
   ['/dashboard', Gauge, 'Dashboard de Risco'],
@@ -14,6 +15,10 @@ const navigation = [
 ];
 
 export default function AppShell({ active, children }) {
+  const { store, isDemo } = useStore();
+  const initials = store.name.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0].toUpperCase()).join('');
+  // A foto é do estabelecimento de demonstração; para outros, mostra as iniciais.
+  const avatarFor = (alt) => isDemo ? <img src={avatar} alt={alt} /> : <span className="avatar-initials" role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : true}>{initials}</span>;
   const navRef = useRef(null);
   // No mobile o menu vira uma faixa rolável; centraliza o item ativo para ele ficar visível.
   useEffect(() => {
@@ -29,7 +34,7 @@ export default function AppShell({ active, children }) {
         {navigation.map(([to, Icon, label]) => <Link className={active === to ? 'selected' : ''} aria-current={active === to ? 'page' : undefined} to={to} key={to}><i aria-hidden="true"><Icon size={16} strokeWidth={2} /></i>{label}</Link>)}
       </nav>
       <div className="ops-help"><b>APOIO IMEDIATO</b><p>Emergências ou alagamentos críticos na via comercial.</p><a className="button primary" href="tel:199">Defesa Civil 199</a><Link className="button" to="/historico">Comitê</Link></div>
-      <div className="ops-user"><img src={avatar} alt="" /><span><b>{store.name}</b><small>{store.neighborhood} · Belém</small></span><Link className="ops-logout" to="/">Sair</Link></div>
+      <div className="ops-user">{avatarFor('')}<span><b>{store.name}</b><small>{store.neighborhood} · Belém</small></span><Link className="ops-logout" to="/">Sair</Link></div>
     </aside>
     <main className="ops-main">
       <header className="ops-top">
@@ -37,7 +42,7 @@ export default function AppShell({ active, children }) {
         <p>Maré alta segura até às {tide.safeUntil}</p>
         <a className="button" href="tel:199">Plantão 199</a>
         <ThemeToggle />
-        <img src={avatar} alt={store.name} />
+        {avatarFor(store.name)}
         <Link className="ops-logout" to="/">Sair</Link>
       </header>
       {children}
