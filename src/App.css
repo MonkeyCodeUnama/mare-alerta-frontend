@@ -1,7 +1,10 @@
 .login-page {
   min-height:100svh;
   display:grid;
+  /* `safe center` centraliza, mas alinha ao topo quando o conteúdo é mais alto que a tela,
+     evitando que o início do card fique cortado e inacessível. */
   place-items:center;
+  align-content:safe center;
   padding:16px;
   background:var(--bg);
 }
@@ -147,6 +150,9 @@
 
 .input-icon {
   position:absolute;
+  /* Alinha com o padding-left de 44px do campo. As telas de login sobrescrevem com
+     ajustes finos por ícone; no cadastro os ícones usam só esta classe. */
+  left:16px;
   z-index:1;
   object-fit:contain;
   pointer-events:none;
@@ -277,11 +283,7 @@
 
 @media (max-width:480px) {
   .login-page {
-    place-items:start center;
-    padding:0;
-  }
-  .login-shell {
-    min-height:100svh;
+    padding:24px 16px;
   }
 }
 
@@ -2150,7 +2152,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 /* ---- Alternador de tema ---- */
 .theme-toggle { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: var(--surface); cursor: pointer; }
 .theme-toggle:hover { color: var(--brand-ink); border-color: var(--brand-border); }
-.login-page .theme-toggle { position: fixed; top: 16px; right: 16px; }
+.login-page .theme-toggle { position: fixed; top: 16px; right: 16px; z-index: 10; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .map-details > img { filter: brightness(.82) saturate(.9); } }
 :root[data-theme='dark'] .map-details > img { filter: brightness(.82) saturate(.9); }
 
@@ -2168,3 +2170,44 @@ button.primary:disabled:hover, .button.primary:disabled:hover { background: var(
 .tide-chart-area:focus-visible { outline: none; border-radius: 8px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 35%, transparent); }
 .tide-chart-area .ref-cursor line { stroke: var(--chart-axis); }
 .form-card select { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 6px; outline: 0; background: var(--surface-soft); color: var(--text-h); font-size: 14px; }
+
+/* Mais respiro vertical no card em telas estreitas. Fica depois de `.register-card`
+   para valer também no cadastro. */
+@media (max-width:480px) {
+  .login-card, .register-card {
+    padding:20px 16px;
+  }
+}
+
+/* ---- Ergonomia em telas de toque ---- */
+/* O Safari no iOS dá zoom automático ao focar um campo com fonte menor que 16px. */
+@media (pointer:coarse) {
+  .input-wrap input, .register-input select,
+  .form-card input, .form-card textarea, .form-card select,
+  .history-tabs select {
+    font-size:16px;
+  }
+
+  /* Alvo de toque de 44px para o botão de mostrar/ocultar senha, sem deixar o
+     texto digitado passar por baixo dele. */
+  .password-toggle {
+    width:44px;
+    height:44px;
+    right:4px;
+  }
+
+  .input-wrap:has(.password-toggle) input {
+    padding-right:52px;
+  }
+
+  /* Links curtos de texto: amplia só a área sensível ao toque, sem alterar o layout. */
+  .recovery, .signup-link {
+    position:relative;
+  }
+
+  .recovery::after, .signup-link::after {
+    content:'';
+    position:absolute;
+    inset:-12px -8px;
+  }
+}
