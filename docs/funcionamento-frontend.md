@@ -55,7 +55,7 @@ O adaptador em `src/api/adapters.js` converte os campos do DTO do backend — po
 
 ### Painel de risco
 
-Ao abrir o painel, o front consulta `GET /risco/atual`, passando o código do bairro no parâmetro `localidade` quando há bairro no perfil. O botão de atualizar repete a consulta. A tela usa os campos retornados para mostrar nível de risco, descrição, pico previsto, nível de maré previsto e probabilidade de chuva. O contrato não especifica a escala da probabilidade, então o valor é exibido sem acrescentar unidade.
+Ao abrir o painel, o front consulta `GET /risco/atual`, passando o código do bairro no parâmetro `localidade` quando há bairro no perfil. O botão de atualizar repete a consulta. A tela usa os campos retornados para mostrar nível de risco, descrição, pico previsto, nível de maré previsto e probabilidade de chuva. Como o contrato não especifica a escala da probabilidade, a interface interpreta valores entre `0` e `1` como fração e os apresenta em porcentagem; valores acima de `1` são exibidos como percentual direto.
 
 O painel não usa a antiga série sintética de maré. Se a consulta falhar, a tela mostra o erro e permite tentar novamente; não substitui a resposta por valores de demonstração.
 

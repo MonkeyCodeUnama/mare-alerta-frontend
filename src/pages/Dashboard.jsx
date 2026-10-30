@@ -13,6 +13,12 @@ const riskLabels = { BAIXO: 'Baixo', MEDIO: 'Médio', ALTO: 'Alto', CRITICO: 'Cr
 const riskSeverity = { BAIXO: 'good', MEDIO: 'warning', ALTO: 'critical', CRITICO: 'critical' };
 const riskText = (value) => riskLabels[value] || value || 'Indisponível';
 const meters = (value) => value == null || value === '' || !Number.isFinite(Number(value)) ? '—' : `${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
+const percent = (value) => {
+  if (value == null || value === '' || !Number.isFinite(Number(value))) return '—';
+  const normalized = Number(value);
+  const display = normalized <= 1 ? normalized * 100 : normalized;
+  return `${display.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 })}%`;
+};
 const dateTime = (value) => value ? new Date(value).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'Não informado';
 
 export default function Dashboard() {
@@ -80,7 +86,7 @@ export default function Dashboard() {
       <section className="metric-row dashboard-metrics">
         <div className="metric"><small>RISCO ATUAL</small><h2>{loading ? '…' : risk ? riskText(risk.nivelRisco) : '—'}</h2><p>{risk?.descricaoCenario || error || 'Informação retornada pela API.'}</p></div>
         <div className="metric"><small>NÍVEL DE MARÉ PREVISTO</small><h2>{meters(risk?.nivelMarePrevistoMetros)}</h2><p>Pico: {risk ? dateTime(risk.horarioPicoPrevisto) : '—'}</p></div>
-        <div className="metric"><small>PROBABILIDADE DE CHUVA</small><h2>{risk?.probabilidadeChuva ?? '—'}</h2><p>Valor informado pelo serviço de risco.</p></div>
+        <div className="metric"><small>PROBABILIDADE DE CHUVA</small><h2>{percent(risk?.probabilidadeChuva)}</h2><p>Valor informado pelo serviço de risco.</p></div>
         <div className="report-card"><small>COLABORAÇÃO RÁPIDA</small><h3>Viu água acumulando na via?</h3><p>Registre uma ocorrência no seu estabelecimento.</p><Link className="button" to="/ocorrencias">Reportar</Link><a className="button button--ghost" href="tel:199">Ligar 199</a></div>
       </section>
     </div>
