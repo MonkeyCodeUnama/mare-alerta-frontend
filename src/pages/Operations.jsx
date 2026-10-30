@@ -40,33 +40,151 @@ function TaskGroup({ phase, done, onToggle }) {
 }
 
 export function Checklist() {
-  const [done, setDone] = useState(() => Object.fromEntries(phases.map((phase) => [phase.id, phase.tasks.map((task) => task[2])])));
+  const { store, session } = useStore();
+  const token = session?.token;
+  const establishmentId = store.id || session?.establishmentId;
+  const [items, setItems] = useState([]);
   const [tab, setTab] = useState('todas');
-  const total = phases.reduce((sum, phase) => sum + phase.tasks.length, 0);
-  const completed = Object.values(done).flat().filter(Boolean).length;
-  const percent = Math.round((completed / total) * 100);
-  const toggle = (id) => (index) => setDone((state) => ({ ...state, [id]: state[id].map((value, position) => position === index ? !value : value) }));
-  const visible = tab === 'todas' ? phases : phases.filter((phase) => phase.id === tab);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [creating, setCreating] = useState(false);
+
+  const fallbackItems = useCallback(() => phases.flatMap((phase) => phase.tasks.map(([task, tag], index) => ({
+    id: `${phase.id}-${index}`,
+    estabelecimentoId,
+    titulo: task,
+    descricao: tag,
+    categoria: phase.id,
+    status: 'PENDENTE',
+    prioridade: phase.id === 'antes' ? 'ALTA' : phase.id === 'durante' ? 'MEDIA' : 'BAIXA',
+    ordem: index,
+    localOnly: true,
+  }))), [establishmentId]);
+
+  const loadChecklist = useCallback(async () => {
+    if (!establishmentId || !token) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const list = await request(`/checklists?estabelecimentoId=${establishmentId}`, { token });
+      setItems(Array.isArray(list) && list.length ? list : fallbackItems());
+    } catch (reason) {
+      setError(reason.message);
+      setItems(fallbackItems());
+    } finally {
+      setLoading(false);
+    }
+  }, [establishmentId, token, fallbackItems]);
+
+  useEffect(() => { loadChecklist(); }, [loadChecklist]);
+
+  const persistTemplate = useCallback(async () => {
+    if (!establishmentId || !token || creating) return;
+    setCreating(true);
+    setError('');
+    try {
+      const created = [];
+      for (const item of fallbackItems()) {
+        const saved = await request('/checklists', {
+          method: 'POST',
+          token,
+          body: jsonBody({
+            estabelecimentoId,
+            titulo: item.titulo,
+            descricao: item.descricao,
+            categoria: item.categoria,
+            status: item.status,
+            prioridade: item.prioridade,
+            ordem: item.ordem,
+          }),
+        });
+        created.push(saved);
+      }
+      setItems(created);
+    } catch (reason) {
+      setError(reason.message);
+    } finally {
+      setCreating(false);
+    }
+  }, [creating, establishmentId, fallbackItems, token]);
+
+  const toggle = useCallback(async (item) => {
+    const nextStatus = item.status === 'CONCLUIDO' ? 'PENDENTE' : 'CONCLUIDO';
+    if (item.localOnly || !token) {
+      setItems((state) => state.map((entry) => entry.id === item.id ? { ...entry, status: nextStatus } : entry));
+      return;
+    }
+    const previous = item.status;
+    setItems((state) => state.map((entry) => entry.id === item.id ? { ...entry, status: nextStatus } : entry));
+    try {
+      const updated = await request(`/checklists/${item.id}`, {
+        method: 'PUT',
+        token,
+        body: jsonBody({
+          estabelecimentoId: item.estabelecimentoId,
+          titulo: item.titulo,
+          descricao: item.descricao,
+          categoria: item.categoria,
+          status: nextStatus,
+          prioridade: item.prioridade,
+          ordem: item.ordem,
+        }),
+      });
+      setItems((state) => state.map((entry) => entry.id === item.id ? updated : entry));
+    } catch (reason) {
+      setItems((state) => state.map((entry) => entry.id === item.id ? { ...entry, status: previous } : entry));
+      setError(reason.message);
+    }
+  }, [token]);
+
+  const grouped = phases.map((phase) => ({
+    ...phase,
+    tasks: items
+      .filter((item) => (item.categoria || 'antes') === phase.id)
+      .sort((left, right) => (left.ordem ?? 0) - (right.ordem ?? 0)),
+  }));
+  const visible = tab === 'todas' ? grouped : grouped.filter((phase) => phase.id === tab);
+  const total = grouped.reduce((sum, phase) => sum + phase.tasks.length, 0);
+  const completed = grouped.reduce((sum, phase) => sum + phase.tasks.filter((item) => item.status === 'CONCLUIDO').length, 0);
+  const percent = total ? Math.round((completed / total) * 100) : 0;
+  const hasRemoteData = items.some((item) => !item.localOnly);
 
   return <AppShell active="/checklist"><div className="ops-content">
     <div className="page-title">
-      <div><h1>Checklist de Prevenção Operacional</h1><p>Checklist local neste dispositivo; as tarefas não são sincronizadas com o servidor.</p></div>
+      <div><h1>Checklist de Prevenção Operacional</h1><p>{hasRemoteData ? 'Checklist sincronizada com o servidor.' : 'Checklist local pronta para ser publicada no servidor.'}</p></div>
       <ExternalLink href={links.whatsappTeam}>WhatsApp Equipe</ExternalLink>
-      <button type="button" className="primary">＋ Nova Tarefa</button>
+      <button type="button" className="primary" onClick={persistTemplate} disabled={creating || hasRemoteData || !establishmentId || !token}>{creating ? 'Publicando…' : hasRemoteData ? 'Checklist sincronizada' : 'Sincronizar checklist'}</button>
     </div>
     <div className="readiness">
       <div><b>ÍNDICE DE PRONTIDÃO <em>{completed}/{total} concluídas</em></b><h2>{percent}% <small>{completed} de {total} medidas ativas</small></h2><i style={{ '--fill': `${percent}%` }} aria-hidden="true" /></div>
-      <span><small>Escopo</small><b>Local</b><small>Estado mantido nesta tela</small></span>
-      <span><small>Sincronização</small><b>Desativada</b><small>API sem endpoint de checklist</small></span>
+      <span><small>Escopo</small><b>{hasRemoteData ? 'Servidor' : 'Local'}</b><small>{hasRemoteData ? 'Estado salvo na API' : 'Modelo local para publicação'}</small></span>
+      <span><small>Sincronização</small><b>{hasRemoteData ? 'Ativa' : 'Pendente'}</b><small>{hasRemoteData ? 'Mudanças persistidas automaticamente' : 'Use o botão para criar a checklist na API'}</small></span>
       <aside><b>ORIENTAÇÕES</b><strong>Revise as tarefas</strong><small>Adapte-as à sua operação</small></aside>
     </div>
+    {loading && <p role="status">Carregando checklist…</p>}
+    {error && <div className="form-error" role="alert">{error}</div>}
     <div className="tabs" role="tablist" aria-label="Fases">
-      {[{ id: 'todas', tab: 'Todas' }, ...phases].map((phase) => {
-        const count = phase.tasks ? phase.tasks.length : total;
+      {[{ id: 'todas', tab: 'Todas', tasks: items }, ...grouped].map((phase) => {
+        const count = phase.id === 'todas' ? total : phase.tasks.length;
         return <button type="button" role="tab" aria-selected={tab === phase.id} className={tab === phase.id ? 'active' : ''} onClick={() => setTab(phase.id)} key={phase.id}>{phase.tab} ({count})</button>;
       })}
     </div>
-    {visible.map((phase) => <TaskGroup key={phase.id} phase={phase} done={done[phase.id]} onToggle={toggle(phase.id)} />)}
+    {visible.map((phase) => <section className="task-group" id={`fase-${phase.id}`} key={phase.id}>
+      <header><b>● {phase.title}</b><span>{phase.priority}</span></header>
+      <div>{phase.tasks.map((item) => {
+        const complete = item.status === 'CONCLUIDO';
+        return <article key={item.id} className={complete ? 'complete' : ''}>
+          <input type="checkbox" checked={complete} onChange={() => toggle(item)} aria-label={item.titulo} />
+          <p><b>{item.titulo}</b><small>{item.localOnly ? 'Tarefa local' : 'Sincronizada com a API'}</small></p>
+          <em>{item.descricao || 'Sem descrição'}</em>
+          {!complete && <button type="button" onClick={() => toggle(item)}>{item.localOnly ? 'Concluir localmente' : 'Concluir'}</button>}
+        </article>;
+      })}</div>
+    </section>)}
   </div></AppShell>;
 }
 

@@ -45,7 +45,9 @@ export function StoreProvider({ children }) {
 
   const loadProfile = useCallback(async () => {
     if (!session?.token) return null;
-    const profile = await request('/estabelecimento/me', { token: session.token });
+    const establishmentId = session?.establishmentId;
+    if (!establishmentId) throw new Error('Sessão inválida: estabelecimento não identificado.');
+    const profile = await request(`/estabelecimento/${establishmentId}`, { token: session.token });
     const next = storeFromApi(profile, session.email);
     setStore(next);
     setProfileLoaded(true);

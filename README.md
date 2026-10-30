@@ -21,7 +21,7 @@ Scripts disponíveis: `npm run build` gera `dist/`, `npm run preview` serve o bu
 | `/entrar` | Entrar | Autenticação pela API. |
 | `/cadastro` | Criar conta | Cadastro remoto de conta e estabelecimento. |
 | `/dashboard` | Painel de risco | Risco atual retornado pela API; ações preventivas locais. |
-| `/checklist` | Checklist | Tarefas em memória, sem sincronização com a API. |
+| `/checklist` | Checklist | Carrega tarefas da API, publica o modelo inicial e sincroniza atualizações. |
 | `/historico` | Histórico de alertas | Lista geral retornada pela API. |
 | `/ocorrencias` | Registro de ocorrência | Cria ocorrência e envia fotos selecionadas para a API. |
 | `/estabelecimento` | Meu estabelecimento | Carrega e atualiza o perfil remoto autenticado. |
@@ -48,5 +48,5 @@ Copie `.env.example` para `.env.local` para configurar `VITE_API_BASE_URL`, `VIT
 
 - React 19, Vite 8, JavaScript, React Router e Recharts.
 - O JWT fica em `sessionStorage`; fechar a aba encerra a sessão local.
-- O backend ainda não documenta recuperação de senha, checklist remoto, série temporal de maré ou consulta posterior de ocorrências.
+- O backend ainda não documenta recuperação de senha, série temporal de maré ou consulta posterior de ocorrências.
 - Interface e comentários voltados ao produto devem permanecer em português do Brasil.

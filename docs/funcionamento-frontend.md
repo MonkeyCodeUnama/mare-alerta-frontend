@@ -33,11 +33,11 @@ Não há uma suíte automatizada de testes configurada neste repositório.
 | `/cadastro` | Público | Coleta os dados básicos do comércio e as credenciais; a API cria a conta e o estabelecimento. |
 | `/dashboard` | Autenticado | Consulta o risco atual para o bairro do estabelecimento; as ações rápidas são locais. |
 | `/historico` | Autenticado | Consulta e exibe a lista geral de alertas retornada pela API. |
-| `/checklist` | Autenticado | Apresenta tarefas locais, sem sincronização ou persistência. |
+| `/checklist` | Autenticado | Carrega tarefas da API; se não houver dados remotos, oferece publicar o modelo inicial e sincroniza as mudanças. |
 | `/ocorrencias` | Autenticado | Envia uma ocorrência e, depois, os arquivos de foto selecionados. |
 | `/estabelecimento` | Autenticado | Carrega e atualiza o perfil do estabelecimento na API. |
 
-As rotas operacionais passam por `RequireAuth`. Sem um JWT, a pessoa é enviada a `/entrar`. Com uma sessão existente, o front carrega o perfil em `/estabelecimento/me` antes de exibir a tela operacional.
+As rotas operacionais passam por `RequireAuth`. Sem um JWT, a pessoa é enviada a `/entrar`. Com uma sessão existente, o front carrega o perfil em `/estabelecimento/{id}` antes de exibir a tela operacional.
 
 ## Fluxos principais
 
@@ -71,7 +71,7 @@ Se uma foto falhar, a interface informa que a ocorrência foi criada e quantas f
 
 ### Checklist e tema
 
-O checklist é mantido somente no estado React da tela. As tarefas começam desmarcadas e não são salvas ao navegar para outra página ou recarregar. O front mantém isso explícito porque a API não oferece um recurso de checklist.
+O checklist consulta `GET /checklists?estabelecimentoId=...`. Quando a API ainda não possui itens para o estabelecimento, a tela mostra um modelo inicial local e oferece o botão para publicá-lo em lote com `POST /checklists`. Depois disso, marcar ou desmarcar tarefas sincroniza o status com `PUT /checklists/{id}`.
 
 O tema claro/escuro é uma preferência local independente da sessão. Uma escolha explícita fica em `localStorage`; sem escolha, a interface acompanha a preferência do sistema.
 
@@ -101,7 +101,6 @@ O servidor precisa aceitar requisições CORS da origem onde o front estiver hos
 - Recuperação de senha e renovação/revogação de token.
 - Série histórica de leituras de maré e previsão em gráfico.
 - Filtros/paginação para alertas.
-- Persistência remota do checklist.
 - Consulta posterior de ocorrências e de fotos já enviadas.
 - Escala/unidade definida para `probabilidadeChuva` e limites/tipos de arquivos para fotos.
 - Política de envio de cópia de ocorrência para terceiros.
