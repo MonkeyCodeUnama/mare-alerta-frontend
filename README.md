@@ -26,6 +26,13 @@ Scripts disponíveis: `npm run build` gera `dist/`, `npm run preview` serve o bu
 | `/ocorrencias` | Registro de ocorrência | Cria ocorrência e envia fotos selecionadas para a API. |
 | `/estabelecimento` | Meu estabelecimento | Carrega e atualiza o perfil remoto autenticado. |
 
+## Rotas em produção
+
+- A aplicação usa `BrowserRouter`, então acessos diretos como `/dashboard` exigem fallback do servidor para `index.html`.
+- Para deploy na Vercel, o rewrite está em `vercel.json`.
+- O arquivo `public/_redirects` cobre hosts compatíveis com Netlify.
+- Sem esse fallback, recarregar ou abrir uma rota interna direto no navegador resulta em `404` do servidor, mesmo com a rota existindo no React.
+
 ## Estrutura
 
 - `src/App.jsx`: rotas.

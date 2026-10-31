@@ -38,6 +38,7 @@ function App() {
         <Route path="/ocorrencias" element={<Occurrences />} />
         <Route path="/estabelecimento" element={<Establishment />} />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
