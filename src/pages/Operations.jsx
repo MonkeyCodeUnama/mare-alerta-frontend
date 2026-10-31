@@ -51,7 +51,7 @@ export function Checklist() {
 
   const fallbackItems = useCallback(() => phases.flatMap((phase) => phase.tasks.map(([task, tag], index) => ({
     id: `${phase.id}-${index}`,
-    estabelecimentoId,
+    estabelecimentoId: establishmentId,
     titulo: task,
     descricao: tag,
     categoria: phase.id,
@@ -93,7 +93,7 @@ export function Checklist() {
           method: 'POST',
           token,
           body: jsonBody({
-            estabelecimentoId,
+            estabelecimentoId: establishmentId,
             titulo: item.titulo,
             descricao: item.descricao,
             categoria: item.categoria,
