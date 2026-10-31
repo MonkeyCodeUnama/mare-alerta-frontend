@@ -287,7 +287,7 @@ export function Occurrences() {
   };
 
   return <AppShell active="/ocorrencias"><form className="ops-content occurrence" onSubmit={submit}>
-    <div className="occ-title"><b>REGISTRO DE OCORRÊNCIA</b><h1>Declaração de Impacto e Perdas</h1><p>Registre a ocorrência no Maré Alerta. O servidor retornará o protocolo de acompanhamento.</p>{protocol && <aside>Protocolo<strong>{protocol}</strong></aside>}</div>
+    <div className="occ-title"><b>REGISTRO DE OCORRÊNCIA</b><h1>Declaração de Impacto e Perdas</h1><p>Registre a ocorrência no Maré Alerta. O servidor retornará o protocolo de acompanhamento.</p><Link className="button" to="/ocorrencias/lista">Ver ocorrências registradas</Link>{protocol && <aside>Protocolo<strong>{protocol}</strong></aside>}</div>
     <section className="form-card"><h2>1. Horário e Lâmina de Água</h2>
       <div className="form-grid">
         <label>Data do alagamento<input name="data" type="date" required /></label>
@@ -312,6 +312,40 @@ export function Occurrences() {
     <div className="send-card"><span>O envio registra a ocorrência na sua conta. A API não oferece envio de cópia para terceiros.</span></div>
     <footer className="form-footer"><span aria-live="polite">{status}</span><button type="button" onClick={() => window.print()}>Exportar PDF</button><button type="submit" className="primary" disabled={busy || created}>{busy ? 'Enviando…' : created ? 'Ocorrência registrada' : 'Enviar Ocorrência'}</button></footer>
   </form></AppShell>;
+}
+
+export function OccurrenceHistory() {
+  const { session } = useStore();
+  const token = session?.token;
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true); setError('');
+    try { setItems(await request('/ocorrencias', { token })); }
+    catch (reason) { setError(reason.message); }
+    finally { setLoading(false); }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const statusLabel = { RASCUNHO: 'Rascunho', ENVIADA: 'Enviada', EM_ANALISE: 'Em análise', FINALIZADA: 'Finalizada' };
+  const levelLabel = { LEVE: 'Leve', MODERADO: 'Moderado', GRAVE: 'Grave' };
+  const money = (value) => value == null ? 'Não informado' : Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const date = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR') : 'Não informada';
+
+  return <AppShell active="/ocorrencias"><main className="ops-content occurrence-history">
+    <div className="page-title"><div><b>HISTÓRICO</b><h1>Ocorrências registradas</h1><p>Acompanhe os registros enviados pelo seu estabelecimento.</p></div><Link className="button primary" to="/ocorrencias">Registrar ocorrência</Link></div>
+    {loading && <p role="status">Carregando ocorrências…</p>}
+    {error && <div className="form-error" role="alert">{error} <button type="button" onClick={load}>Tentar novamente</button></div>}
+    {!loading && !error && !items.length && <section className="form-card empty-state"><h2>Nenhuma ocorrência registrada</h2><p>Quando você registrar um alagamento, ele aparecerá nesta lista.</p><Link className="button primary" to="/ocorrencias">Registrar primeira ocorrência</Link></section>}
+    {!loading && !error && items.length > 0 && <div className="occurrence-list">{items.map((item) => <article className="form-card occurrence-card" key={item.id}>
+      <header><div><b>{item.protocolo || `Ocorrência #${item.id}`}</b><h2>{item.titulo || 'Ocorrência registrada'}</h2></div><span className={`occurrence-status status-${(item.status || '').toLowerCase()}`}>{statusLabel[item.status] || item.status || 'Sem status'}</span></header>
+      <p>{item.descricao || 'Sem descrição informada.'}</p>
+      <dl><div><dt>Data</dt><dd>{date(item.dataOcorrencia)}</dd></div><div><dt>Horário</dt><dd>{item.horaInicio || '—'}{item.horaFim ? `–${item.horaFim}` : ''}</dd></div><div><dt>Alagamento</dt><dd>{levelLabel[item.nivelAlagamento] || item.nivelAlagamento || 'Não informado'}</dd></div><div><dt>Prejuízo estimado</dt><dd>{money(item.valorEstimadoPrejuizo)}</dd></div><div><dt>Fotos</dt><dd>{item.fotos?.length || 0} anexada(s)</dd></div></dl>
+    </article>)}</div>}
+  </main></AppShell>;
 }
 
 const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];

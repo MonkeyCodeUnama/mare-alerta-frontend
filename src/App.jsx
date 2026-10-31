@@ -4,7 +4,7 @@ import Landing from './pages/Landing';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import { Checklist, History, Occurrences, Establishment } from './pages/Operations';
+import { Checklist, History, Occurrences, OccurrenceHistory, Establishment } from './pages/Operations';
 import { useStore } from './state/store';
 
 function RequireAuth() {
@@ -36,6 +36,7 @@ function App() {
         <Route path="/checklist" element={<Checklist />} />
         <Route path="/historico" element={<History />} />
         <Route path="/ocorrencias" element={<Occurrences />} />
+        <Route path="/ocorrencias/lista" element={<OccurrenceHistory />} />
         <Route path="/estabelecimento" element={<Establishment />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -1594,6 +1594,79 @@
   font-size:11px;
 }
 
+.occurrence-history .page-title>b, .occ-title>b {
+  color:var(--brand-ink);
+  font-size:11px;
+  letter-spacing:.12em;
+}
+
+.occurrence-list {
+  display:grid;
+  gap:14px;
+}
+
+.occurrence-card header {
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+}
+
+.occurrence-card header>b, .occurrence-card header h2 {
+  margin:0;
+}
+
+.occurrence-card header h2 {
+  margin-top:6px;
+  font-size:18px;
+}
+
+.occurrence-card>p {
+  color:var(--text-muted);
+  line-height:1.5;
+}
+
+.occurrence-status {
+  padding:5px 9px;
+  border-radius:99px;
+  background:var(--brand-tint);
+  color:var(--brand-ink);
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.occurrence-card dl {
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:12px;
+  margin:18px 0 0;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+}
+
+.occurrence-card dt {
+  color:var(--text-muted);
+  font-size:10px;
+  text-transform:uppercase;
+}
+
+.occurrence-card dd {
+  margin:4px 0 0;
+  font-weight:700;
+  font-size:13px;
+}
+
+.empty-state p {
+  color:var(--text-muted);
+}
+
+@media (max-width:700px) {
+  .occurrence-card dl { grid-template-columns:repeat(2, 1fr); }
+  .occurrence-card header { display:block; }
+  .occurrence-status { display:inline-block; margin-top:12px; }
+}
+
 .form-footer {
   display:flex;
   justify-content:flex-end;
