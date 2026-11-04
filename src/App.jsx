@@ -6,6 +6,13 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import { Checklist, History, Occurrences, OccurrenceHistory, Establishment } from './pages/Operations';
 import { useStore } from './state/store';
+import WhatsappAdmin from './pages/admin/WhatsappAdmin';
+
+function RequireAdmin() {
+  const { session } = useStore();
+  if (session?.role !== 'ADMIN') return <Navigate to="/dashboard" replace />;
+  return <Outlet />;
+}
 
 function RequireAuth() {
   const { authenticated, profileLoaded, loadProfile, logout } = useStore();
@@ -38,6 +45,9 @@ function App() {
         <Route path="/ocorrencias" element={<Occurrences />} />
         <Route path="/ocorrencias/lista" element={<OccurrenceHistory />} />
         <Route path="/estabelecimento" element={<Establishment />} />
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin/whatsapp" element={<WhatsappAdmin />} />
+        </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

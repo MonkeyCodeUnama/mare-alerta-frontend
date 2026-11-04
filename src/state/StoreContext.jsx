@@ -15,7 +15,7 @@ export function StoreProvider({ children }) {
   const [profileLoaded, setProfileLoaded] = useState(false);
 
   const saveSession = useCallback((result) => {
-    const next = { token: result.token, establishmentId: result.estabelecimentoId, email: result.email };
+    const next = { token: result.token, establishmentId: result.estabelecimentoId, email: result.email, role: String(result.role || result.perfil || result.usuario?.role || 'USER').toUpperCase() };
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(next));
     setSession(next);
     setStore(EMPTY_STORE);

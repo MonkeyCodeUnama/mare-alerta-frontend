@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClipboardCheck, FileWarning, Gauge, History, Menu, Store, X } from 'lucide-react';
+import { ClipboardCheck, FileWarning, Gauge, History, Menu, MessageCircle, Store, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { neighborhoodLabel, useStore } from '../state/store';
@@ -13,7 +13,7 @@ const navigation = [
 ];
 
 export default function AppShell({ active, children }) {
-  const { store, logout } = useStore();
+  const { store, session, logout } = useStore();
   const navigate = useNavigate();
   const initials = store.name.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0].toUpperCase()).join('');
   const avatarFor = (alt) => <span className="avatar-initials" role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : true}>{initials}</span>;
@@ -25,6 +25,7 @@ export default function AppShell({ active, children }) {
       <div className="ops-tide"><b>ESTABELECIMENTO CONECTADO</b><strong>{neighborhoodLabel(store.neighborhood) || 'Localidade não informada'}</strong><span>Perfil vinculado à sua conta</span></div>
       <nav id="mobile-navigation" className={menuOpen ? 'menu-open' : ''} aria-label="Navegação principal">
         {navigation.map(([to, Icon, label]) => <Link onClick={() => setMenuOpen(false)} className={active === to ? 'selected' : ''} aria-current={active === to ? 'page' : undefined} to={to} key={to}><i aria-hidden="true"><Icon size={16} strokeWidth={2} /></i>{label}</Link>)}
+        {session?.role === 'ADMIN' && <Link onClick={() => setMenuOpen(false)} className={active === '/admin/whatsapp' ? 'selected' : ''} to="/admin/whatsapp"><i aria-hidden="true"><MessageCircle size={16} /></i>WhatsApp Admin</Link>}
       </nav>
       <div className="ops-help"><b>APOIO IMEDIATO</b><p>Emergências ou alagamentos críticos na via comercial.</p><a className="button primary" href="tel:199">Defesa Civil 199</a><Link className="button" to="/historico">Comitê</Link></div>
       <div className="ops-user">{avatarFor('')}<span><b>{store.name}</b><small>{neighborhoodLabel(store.neighborhood)} · Belém</small></span><button className="ops-logout" type="button" onClick={signOut}>Sair</button></div>
