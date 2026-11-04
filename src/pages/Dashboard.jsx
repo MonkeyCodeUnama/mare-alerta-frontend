@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { request } from '../api/client';
@@ -55,7 +56,7 @@ export default function Dashboard() {
   return <AppShell active="/dashboard">
     <div className="dashboard-content">
       <section className="salutation">
-        <div className="salutation-icon" aria-hidden="true">♢</div>
+        <div className="salutation-icon" aria-hidden="true"><ShieldAlert size={24} strokeWidth={1.8} /></div>
         <div><h1>Painel de Risco Operacional <em>{neighborhoodLabel(store.neighborhood)}</em></h1><p>{greeting} Dados de risco consultados no serviço Maré Alerta.</p></div>
         <div className="telemetry" aria-live="polite"><small>Consulta de risco</small><b>{loading ? 'Atualizando…' : risk ? `Atualizado às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sem leitura'}</b></div>
         <button className="refresh" type="button" aria-label="Atualizar leitura" onClick={loadRisk} disabled={loading}>↻</button>
