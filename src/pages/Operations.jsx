@@ -87,24 +87,11 @@ export function Checklist() {
     setCreating(true);
     setError('');
     try {
-      const created = [];
-      for (const item of fallbackItems()) {
-        const saved = await request('/checklists', {
-          method: 'POST',
-          token,
-          body: jsonBody({
-            estabelecimentoId: establishmentId,
-            titulo: item.titulo,
-            descricao: item.descricao,
-            categoria: item.categoria,
-            status: item.status,
-            prioridade: item.prioridade,
-            ordem: item.ordem,
-          }),
-        });
-        created.push(saved);
-      }
-      setItems(created);
+      const created = await request(`/checklists/gerar-padrao?estabelecimentoId=${establishmentId}`, {
+        method: 'POST',
+        token,
+      });
+      setItems(Array.isArray(created) ? created : []);
     } catch (reason) {
       setError(reason.message);
     } finally {
@@ -121,18 +108,9 @@ export function Checklist() {
     const previous = item.status;
     setItems((state) => state.map((entry) => entry.id === item.id ? { ...entry, status: nextStatus } : entry));
     try {
-      const updated = await request(`/checklists/${item.id}`, {
-        method: 'PUT',
+      const updated = await request(`/checklists/${item.id}/toggle`, {
+        method: 'PATCH',
         token,
-        body: jsonBody({
-          estabelecimentoId: item.estabelecimentoId,
-          titulo: item.titulo,
-          descricao: item.descricao,
-          categoria: item.categoria,
-          status: nextStatus,
-          prioridade: item.prioridade,
-          ordem: item.ordem,
-        }),
       });
       setItems((state) => state.map((entry) => entry.id === item.id ? updated : entry));
     } catch (reason) {
