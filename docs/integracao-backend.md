@@ -1,6 +1,6 @@
 # Integração com o backend
 
-O frontend usa a API documentada em `https://ma-api.andr3dav1d.dev/v3/api-docs`. A URL base pode ser alterada com `VITE_API_BASE_URL`. O OpenAPI anuncia HTTP; o cliente mantém HTTPS para evitar conteúdo misto no navegador.
+O front-end usa `https://ma-api.andr3dav1d.dev` por padrão. Para trocar a URL base, configure `VITE_API_BASE_URL`. Este guia descreve as chamadas implementadas no cliente.
 
 ## Endpoints conectados
 
@@ -12,18 +12,20 @@ O frontend usa a API documentada em `https://ma-api.andr3dav1d.dev/v3/api-docs`.
 | Risco | `GET /risco/atual?localidade=...` | Alimenta o painel com o cenário retornado pelo serviço. |
 | Alertas | `GET /alertas` | Exibe a lista geral retornada, sem filtros locais de categoria. |
 | Ocorrências | `POST /ocorrencias` | Registra o impacto e exibe o protocolo retornado. |
+| Histórico de ocorrências | `GET /ocorrencias` | Lista os registros, protocolos, status e quantidades de fotos retornados. |
 | Fotos | `POST /ocorrencias/{id}/fotos` | Envia os arquivos escolhidos após a criação da ocorrência. |
-| Checklist | `GET /checklists`, `POST /checklists`, `PUT /checklists/{id}` | Busca itens do estabelecimento, publica o modelo inicial e sincroniza alterações de status. |
+| Checklist | `GET /checklists?estabelecimentoId=...`, `POST /checklists/gerar-padrao?estabelecimentoId=...`, `PATCH /checklists/{id}/toggle` | Busca itens do estabelecimento, gera o modelo padrão e alterna o status de um item. |
+| Resumo do checklist | `GET /checklists/resumo` | Exibe o progresso no painel. |
+| Administração do WhatsApp | `GET /admin/whatsapp/status`, `/history` e `/qr` sob o mesmo prefixo | Consulta conexão, histórico de envios e QR Code. |
+| Ações do WhatsApp | `POST /admin/whatsapp/{connect,reconnect,disconnect,test}`, `PATCH /admin/whatsapp/settings` | Controla a conexão, envia mensagem de teste e salva a configuração automática. |
 
-Chamadas autenticadas usam `Authorization: Bearer <token>`. O token e o ID do estabelecimento ficam em `sessionStorage`, não no perfil persistido. A interface converte os nomes de campos em português e os enums do OpenAPI para os modelos apresentados pelos formulários.
+Chamadas autenticadas usam `Authorization: Bearer <token>`. O token e o ID do estabelecimento ficam em `sessionStorage`. A interface converte campos e enums retornados pela API para os modelos usados nos formulários.
 
-## Limitações do contrato atual
+## Formatação e envio de dados
 
-- Não há endpoint documentado para recuperar senha, renovar/revogar sessão, consultar série temporal da maré, filtrar/paginar alertas ou listar/consultar ocorrências depois do envio.
-- O endpoint de risco descreve `probabilidadeChuva` como número, sem especificar escala ou unidade; a interface mostra o valor sem inferir unidade.
-- A ocorrência aceita categorias de dano como texto; os rótulos selecionados são enviados separados por vírgula.
-- O OpenAPI não documenta limites/tipos aceitos para fotos nem política de cópia a terceiros. A interface envia imagens escolhidas e não afirma compartilhamento com Defesa Civil/associações.
-- O frontend não usa o cenário sintético legado em `src/data/tide.js` nas telas operacionais.
+- Para exibir `probabilidadeChuva`, o painel multiplica valores de até `1` por `100` e apresenta valores acima de `1` diretamente como porcentagem.
+- O formulário de ocorrência envia as categorias de dano como texto, com os rótulos separados por vírgulas.
+- A interface envia cada foto em `multipart/form-data`, no campo `arquivo`, depois de receber o ID da ocorrência.
 
 ## Desenvolvimento
 
