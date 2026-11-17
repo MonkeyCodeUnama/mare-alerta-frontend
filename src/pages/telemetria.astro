@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import TideChartIsland from '../features/telemetry/TideChartIsland';
+---
+
+<EditorialLayout
+  title="Telemetria 24h — Maré Alerta | Belém/PA"
+  activeNav="/telemetria"
+>
+  <TideChartIsland client:load />
+</EditorialLayout>
