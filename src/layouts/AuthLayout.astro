@@ -1,0 +1,390 @@
+---
+import '../shared/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  variant?: 'login' | 'register';
+}
+
+const {
+  title = 'Acesso — Maré Alerta',
+  description = 'Previsão de maré e prevenção para comércios em Belém.',
+  variant,
+} = Astro.props;
+
+const inferredVariant =
+  variant ??
+  (title.toLowerCase().includes('cadastr') || title.toLowerCase().includes('criar')
+    ? 'register'
+    : 'login');
+const isRegister = inferredVariant === 'register';
+const initialSlide = isRegister ? 1 : 0;
+
+const slides = [
+  {
+    base: 'guajara-orla',
+    alt: 'Orla da Baía do Guajará em Belém',
+  },
+  {
+    base: 'estacao-docas',
+    alt: 'Estação das Docas na Baía do Guajará',
+  },
+  {
+    base: 'belem-skyline',
+    alt: 'Frente fluvial e comércio de Belém',
+  },
+  {
+    base: 'natureza-amazonia',
+    alt: 'Regime de marés amazônicas no Pará',
+  },
+] as const;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta id="meta-theme-color" name="theme-color" content="#f4f6f9" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Shippori+Mincho:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      (function () {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var qTheme = params.get('theme');
+          var stored = localStorage.getItem('mare-alerta-theme');
+          var theme =
+            qTheme === 'dark' || qTheme === 'light'
+              ? qTheme
+              : stored === 'dark' || stored === 'light'
+                ? stored
+                : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.getElementById('meta-theme-color');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#243044' : '#f4f6f9');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <style is:inline>
+      .auth-dot-canvas {
+        background-color: var(--color-canvas);
+        background-image: radial-gradient(
+          color-mix(in oklab, var(--color-text-primary) 13%, transparent) 1.25px,
+          transparent 1.25px
+        );
+        background-size: 22px 22px;
+      }
+      :root[data-theme="dark"] .auth-dot-canvas {
+        background-image: radial-gradient(
+          color-mix(in oklab, #ffffff 11%, transparent) 1.25px,
+          transparent 1.25px
+        );
+      }
+
+      .auth-slide-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 750ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity;
+        pointer-events: none;
+      }
+      .auth-slide-layer.is-leaving {
+        z-index: 1;
+        opacity: 1;
+      }
+      .auth-slide-layer.is-active {
+        z-index: 2;
+        opacity: 1;
+      }
+
+      @keyframes authSlideProgress {
+        from {
+          transform: scaleX(0);
+        }
+        to {
+          transform: scaleX(1);
+        }
+      }
+      .auth-slide-progress-bar {
+        transform-origin: left;
+        transform: scaleX(0);
+      }
+      .auth-slide-progress-bar.is-done {
+        transform: scaleX(1);
+        animation: none;
+      }
+      .auth-slide-progress-bar.is-active {
+        animation: authSlideProgress 5500ms linear forwards;
+      }
+      .auth-slide-progress-bar.is-paused {
+        animation-play-state: paused;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .auth-slide-layer {
+          transition: opacity 250ms ease;
+          transform: none;
+        }
+        .auth-slide-progress-bar.is-active {
+          animation: none;
+          transform: scaleX(1);
+        }
+      }
+    </style>
+  </head>
+  <body
+    data-initial-slide={initialSlide}
+    class="auth-dot-canvas min-h-dvh grid grid-cols-1 lg:grid-cols-12 text-[var(--color-text-primary)] relative overflow-x-clip"
+  >
+    <!-- Coluna esquerda: superfície editorial limpa sem card pesado + botão ✕ no canto superior -->
+    <main class="relative lg:col-span-6 flex items-center justify-center min-h-dvh px-5 py-12 sm:p-8 lg:px-14 lg:py-12">
+      <a
+        href="/"
+        aria-label="Fechar e voltar ao início"
+        title="Voltar ao início"
+        class="fixed lg:absolute top-4 right-4 sm:top-6 sm:right-6 z-30 inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-border-editorial)] bg-[var(--color-canvas)] text-[var(--color-text-primary)] shadow-xs hover:bg-[var(--color-brand-primary)] hover:text-white hover:border-[var(--color-brand-primary)] transition-all"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+          <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+
+      <section class="w-full max-w-[420px] mx-auto space-y-5">
+        <!-- Moldura fotográfica compacta (Celular & Tablet < lg) -->
+        <div
+          data-auth-frame
+          class="lg:hidden relative h-36 sm:h-44 w-full rounded-2xl overflow-hidden border border-[var(--color-border-editorial)] bg-[oklch(20%_0.035_244)] shadow-[0_14px_30px_-16px_rgba(8,22,44,0.28)] cursor-pointer select-none"
+        >
+          {slides.map((slide, idx) => (
+            <div
+              data-auth-slide={idx}
+              class={`auth-slide-layer ${idx === initialSlide ? 'is-active' : ''}`}
+            >
+              <picture class="contents">
+                <source type="image/avif" srcset={`/${slide.base}-mobile.avif`} />
+                <source type="image/webp" srcset={`/${slide.base}-mobile.webp`} />
+                <img
+                  src={`/${slide.base}.jpg`}
+                  alt={slide.alt}
+                  width="1600"
+                  height="1067"
+                  loading={idx === initialSlide ? 'eager' : 'lazy'}
+                  decoding="async"
+                  class="w-full h-full object-cover object-[center_42%]"
+                />
+              </picture>
+            </div>
+          ))}
+
+          <div
+            class="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-14 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
+            aria-hidden="true"
+          ></div>
+
+          <div class="absolute inset-x-3 bottom-2 z-10 grid grid-cols-4 gap-1.5">
+            {slides.map((_, idx) => (
+              <button
+                type="button"
+                data-auth-segment={idx}
+                aria-label={`Ver imagem ${idx + 1} de ${slides.length}`}
+                class="py-1.5 cursor-pointer focus:outline-none"
+              >
+                <span class="block h-[2px] w-full rounded-full bg-white/30 overflow-hidden">
+                  <span
+                    data-auth-fill={idx}
+                    class={`auth-slide-progress-bar block h-full w-full rounded-full bg-white ${
+                      idx < initialSlide ? 'is-done' : idx === initialSlide ? 'is-active' : ''
+                    }`}
+                  ></span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <slot />
+      </section>
+    </main>
+
+    <!-- Coluna direita: moldura fotográfica arredondada (Desktop lg+) -->
+    <aside class="hidden lg:block lg:col-span-6 h-dvh sticky top-0 p-3 xl:p-4">
+      <div
+        data-auth-frame
+        class="relative w-full h-full rounded-[28px] overflow-hidden border border-[var(--color-border-editorial)] bg-[oklch(12%_0.030_246)] shadow-[0_24px_60px_-20px_rgba(8,22,44,0.32)] cursor-pointer select-none"
+      >
+        {slides.map((slide, idx) => (
+          <div
+            data-auth-slide={idx}
+            class={`auth-slide-layer ${idx === initialSlide ? 'is-active' : ''}`}
+          >
+            <picture class="contents">
+              <source type="image/avif" srcset={`/${slide.base}.avif`} />
+              <source type="image/webp" srcset={`/${slide.base}.webp`} />
+              <img
+                src={`/${slide.base}.jpg`}
+                alt={slide.alt}
+                width="2560"
+                height="1707"
+                loading={idx === initialSlide ? 'eager' : 'lazy'}
+                decoding="async"
+                class="w-full h-full object-cover object-[center_45%]"
+              />
+            </picture>
+          </div>
+        ))}
+
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-24 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
+          aria-hidden="true"
+        ></div>
+
+        <div class="absolute inset-x-6 bottom-4 z-10 grid grid-cols-4 gap-2">
+          {slides.map((_, idx) => (
+            <button
+              type="button"
+              data-auth-segment={idx}
+              aria-label={`Ver imagem ${idx + 1} de ${slides.length}`}
+              class="py-1.5 cursor-pointer focus:outline-none"
+            >
+              <span class="block h-[2.5px] w-full rounded-full bg-white/30 overflow-hidden">
+                <span
+                  data-auth-fill={idx}
+                  class={`auth-slide-progress-bar block h-full w-full rounded-full bg-white ${
+                    idx < initialSlide ? 'is-done' : idx === initialSlide ? 'is-active' : ''
+                  }`}
+                ></span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </aside>
+
+    <script is:inline>
+      (function () {
+        document.querySelectorAll('.btn-water-pill').forEach(function (pill) {
+          pill.addEventListener('pointermove', function (ev) {
+            var rect = pill.getBoundingClientRect();
+            pill.style.setProperty('--mx', (ev.clientX - rect.left) + 'px');
+            pill.style.setProperty('--my', (ev.clientY - rect.top) + 'px');
+          });
+        });
+
+        /* Transição contínua entre fotos sem flash escuro + barra de progresso segmentada */
+        var slideCount = 4;
+        var currentSlide = Number(document.body.getAttribute('data-initial-slide') || '0');
+        var slideLayers = Array.prototype.slice.call(document.querySelectorAll('[data-auth-slide]'));
+        var segmentBtns = Array.prototype.slice.call(document.querySelectorAll('[data-auth-segment]'));
+        var progressFills = Array.prototype.slice.call(document.querySelectorAll('[data-auth-fill]'));
+        var timerId = null;
+        var cleanupId = null;
+
+        function goToSlide(nextIdx) {
+          var target = ((nextIdx % slideCount) + slideCount) % slideCount;
+          if (target === currentSlide) return;
+
+          var prev = currentSlide;
+          currentSlide = target;
+
+          if (cleanupId !== null) window.clearTimeout(cleanupId);
+
+          slideLayers.forEach(function (el) {
+            var idx = Number(el.getAttribute('data-auth-slide'));
+            el.classList.remove('is-leaving', 'is-active');
+            if (idx === prev) {
+              el.classList.add('is-leaving');
+            } else if (idx === currentSlide) {
+              el.classList.add('is-active');
+            }
+          });
+
+          cleanupId = window.setTimeout(function () {
+            slideLayers.forEach(function (el) {
+              if (Number(el.getAttribute('data-auth-slide')) !== currentSlide) {
+                el.classList.remove('is-leaving');
+              }
+            });
+          }, 800);
+
+          progressFills.forEach(function (fill) {
+            fill.classList.remove('is-done', 'is-active');
+          });
+          window.requestAnimationFrame(function () {
+            progressFills.forEach(function (fill) {
+              var idx = Number(fill.getAttribute('data-auth-fill'));
+              if (idx < currentSlide) {
+                fill.classList.add('is-done');
+              } else if (idx === currentSlide) {
+                fill.classList.add('is-active');
+              }
+            });
+          });
+        }
+
+        function startTimer() {
+          if (timerId !== null) window.clearInterval(timerId);
+          var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduce) return;
+          timerId = window.setInterval(function () {
+            if (!document.hidden) {
+              goToSlide(currentSlide + 1);
+            }
+          }, 5500);
+        }
+
+        segmentBtns.forEach(function (seg) {
+          seg.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            goToSlide(Number(seg.getAttribute('data-auth-segment') || '0'));
+            startTimer();
+          });
+        });
+
+        document.querySelectorAll('[data-auth-frame]').forEach(function (frame) {
+          frame.addEventListener('click', function (ev) {
+            if (ev.target && ev.target.closest('a, button')) return;
+            goToSlide(currentSlide + 1);
+            startTimer();
+          });
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          progressFills.forEach(function (fill) {
+            fill.classList.toggle('is-paused', document.hidden);
+          });
+        });
+
+        window.addEventListener('auth-mode-changed', function (ev) {
+          var mode = ev && ev.detail;
+          goToSlide(mode === 'register' ? 1 : 0);
+          startTimer();
+        });
+
+        startTimer();
+
+        if ('serviceWorker' in navigator) {
+          var isLocal =
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
+          if (isLocal) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              regs.forEach(function (reg) { reg.unregister(); });
+            }).catch(function () {});
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
