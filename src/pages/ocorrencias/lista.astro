@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../../layouts/EditorialLayout.astro';
+import OccurrenceList from '../../features/occurrences/OccurrenceList';
+---
+
+<EditorialLayout
+  title="Protocolos de Sinistro — Maré Alerta | Belém/PA"
+  activeNav="/ocorrencias"
+>
+  <OccurrenceList client:load />
+</EditorialLayout>
