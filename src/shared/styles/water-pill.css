@@ -1,0 +1,30 @@
+.btn-water-pill {
+  position: relative;
+  overflow: hidden;
+  --mx: 50%;
+  --my: 50%;
+  transition: transform 220ms ease, box-shadow 260ms ease, background-color 220ms ease, opacity 200ms ease;
+}
+
+.btn-water-pill::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(
+    130px circle at var(--mx) var(--my),
+    oklch(82% 0.11 210 / 0.42),
+    oklch(52% 0.16 234 / 0.18) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+
+.btn-water-pill:hover::before {
+  opacity: 1;
+}
+
+.btn-water-pill:hover {
+  transform: translateY(-1px);
+}
