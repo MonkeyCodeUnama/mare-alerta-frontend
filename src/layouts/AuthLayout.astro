@@ -173,10 +173,10 @@ const slides = [
               class={`auth-slide-layer ${idx === initialSlide ? 'is-active' : ''}`}
             >
               <picture class="contents">
-                <source type="image/avif" srcset={`/${slide.base}-mobile.avif`} />
-                <source type="image/webp" srcset={`/${slide.base}-mobile.webp`} />
+                <source type="image/avif" srcset={`/images/${slide.base}-mobile.avif`} />
+                <source type="image/webp" srcset={`/images/${slide.base}-mobile.webp`} />
                 <img
-                  src={`/${slide.base}.jpg`}
+                  src={`/images/${slide.base}.jpg`}
                   alt={slide.alt}
                   width="1600"
                   height="1067"
@@ -230,10 +230,10 @@ const slides = [
             class={`auth-slide-layer ${idx === initialSlide ? 'is-active' : ''}`}
           >
             <picture class="contents">
-              <source type="image/avif" srcset={`/${slide.base}.avif`} />
-              <source type="image/webp" srcset={`/${slide.base}.webp`} />
+              <source type="image/avif" srcset={`/images/${slide.base}.avif`} />
+              <source type="image/webp" srcset={`/images/${slide.base}.webp`} />
               <img
-                src={`/${slide.base}.jpg`}
+                src={`/images/${slide.base}.jpg`}
                 alt={slide.alt}
                 width="2560"
                 height="1707"
