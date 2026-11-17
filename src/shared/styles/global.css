@@ -1,0 +1,653 @@
+@import "tailwindcss";
+
+@theme {
+  /* Tipografia Editorial Costeira — Newsreader + UI Inter + Dados Mono */
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Light Mode — Névoa Prateada & Azul Marinho Costeiro */
+  --color-canvas: oklch(97% 0.004 238);
+  --color-surface: oklch(99.2% 0.002 238);
+  --color-surface-subtle: oklch(94% 0.007 238);
+  --color-surface-muted: oklch(94% 0.007 238);
+  --color-sidebar-bg: oklch(98.5% 0.003 238);
+  --color-border-editorial: oklch(88% 0.010 238);
+
+  --color-text-primary: oklch(16% 0.024 246);
+  --color-text-secondary: oklch(36% 0.018 242);
+  --color-text-muted: oklch(50% 0.014 238);
+
+  /* Acento Azul Marinho / Aço Costeiro */
+  --color-accent: oklch(34% 0.115 244);
+  --color-brand-primary: oklch(34% 0.115 244);
+  --color-accent-subtle: oklch(92% 0.022 240);
+
+  /* Escala Semântica de Risco (Pastel Desaturada Editorial, ΔTone ≥ 60) */
+  --color-risk-low-bg: oklch(93% 0.036 155);
+  --color-risk-low-text: oklch(25% 0.095 155);
+  --color-risk-low-border: oklch(82% 0.055 155);
+
+  --color-risk-medium-bg: oklch(93.5% 0.052 82);
+  --color-risk-medium-text: oklch(28% 0.095 82);
+  --color-risk-medium-border: oklch(83% 0.075 82);
+
+  --color-risk-high-bg: oklch(92.5% 0.054 34);
+  --color-risk-high-text: oklch(26% 0.105 34);
+  --color-risk-high-border: oklch(81% 0.080 34);
+
+  --color-risk-critical-bg: oklch(91.5% 0.062 18);
+  --color-risk-critical-text: oklch(23% 0.115 18);
+  --color-risk-critical-border: oklch(80% 0.090 18);
+
+  /* IA / Predição */
+  --color-badge-ai-bg: oklch(92.5% 0.038 265);
+  --color-badge-ai-text: oklch(27% 0.100 265);
+  --color-badge-ai-border: oklch(82% 0.060 265);
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Dark Mode — Azul Noturno Profundo & Ardósia Costeira de Alto Contraste */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-canvas: oklch(12.5% 0.022 245);
+  --color-surface: oklch(16.8% 0.026 245);
+  --color-surface-subtle: oklch(21.5% 0.028 244);
+  --color-surface-muted: oklch(23% 0.028 244);
+  --color-sidebar-bg: oklch(10.5% 0.020 246);
+  --color-border-editorial: oklch(30% 0.030 242);
+
+  --color-text-primary: oklch(97.5% 0.004 235);
+  --color-text-secondary: oklch(84% 0.012 236);
+  --color-text-muted: oklch(68% 0.016 236);
+
+  --color-accent: oklch(62% 0.145 240);
+  --color-brand-primary: oklch(58% 0.145 240);
+  --color-accent-subtle: oklch(25% 0.045 242);
+
+  --color-risk-low-bg: oklch(22% 0.055 152);
+  --color-risk-low-text: oklch(88% 0.085 152);
+  --color-risk-low-border: oklch(38% 0.080 152);
+
+  --color-risk-medium-bg: oklch(23% 0.060 82);
+  --color-risk-medium-text: oklch(90% 0.085 82);
+  --color-risk-medium-border: oklch(40% 0.080 82);
+
+  --color-risk-high-bg: oklch(23% 0.065 34);
+  --color-risk-high-text: oklch(89% 0.090 34);
+  --color-risk-high-border: oklch(40% 0.085 34);
+
+  --color-risk-critical-bg: oklch(22% 0.072 18);
+  --color-risk-critical-text: oklch(90% 0.090 18);
+  --color-risk-critical-border: oklch(40% 0.090 18);
+
+  --color-badge-ai-bg: oklch(23% 0.052 268);
+  --color-badge-ai-text: oklch(88% 0.080 268);
+  --color-badge-ai-border: oklch(39% 0.080 268);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+    hyphens: none;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.font-editorial {
+  font-family: var(--font-editorial);
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-data {
+  font-family: var(--font-mono-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Transição unificada de tema via View Transitions (sem dessincronia entre faixas azuis e claras) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: normal;
+}
+
+html.is-theme-switching *,
+html.is-theme-switching *::before,
+html.is-theme-switching *::after {
+  transition-property: none !important;
+}
+
+/* Marca e fluxo oceânico compartido em todo o ecossistema Maré Alerta */
+.font-brand-jp {
+  font-family: 'Shippori Mincho', Georgia, serif;
+  letter-spacing: 0.04em;
+}
+
+@keyframes alertaFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.brand-alerta-flow {
+  background: linear-gradient(
+    115deg,
+    oklch(24% 0.095 246) 0%,
+    oklch(38% 0.125 240) 34%,
+    oklch(52% 0.105 232) 50%,
+    oklch(38% 0.125 240) 66%,
+    oklch(24% 0.095 246) 100%
+  );
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: alertaFlow 5.5s ease-in-out infinite;
+}
+
+:root[data-theme="dark"] .brand-alerta-flow,
+.on-ocean-surface .brand-alerta-flow,
+.brand-alerta-flow.on-ocean-surface {
+  background: linear-gradient(
+    115deg,
+    oklch(62% 0.095 238) 0%,
+    oklch(76% 0.085 230) 34%,
+    oklch(88% 0.035 225) 50%,
+    oklch(76% 0.085 230) 66%,
+    oklch(62% 0.095 238) 100%
+  );
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sistema de Cards do Painel (Alta legibilidade em Light e Dark Híbrido) */
+.app-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-editorial);
+  box-shadow:
+    0 10px 26px -14px rgba(8, 22, 44, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.app-card-sub {
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-border-editorial);
+}
+:root[data-theme="dark"] .app-card-sub {
+  background-color: oklch(23% 0.028 242);
+}
+
+/* Superfície oceânica signature do sistema (refinada para Light e Dark Híbrido) */
+.lp-ocean-card {
+  position: relative;
+  background:
+    radial-gradient(125% 95% at 10% 0%, oklch(44% 0.130 234 / 0.55), transparent 62%),
+    radial-gradient(95% 80% at 95% 100%, oklch(32% 0.100 222 / 0.45), transparent 65%),
+    linear-gradient(155deg, oklch(31% 0.105 240) 0%, oklch(22% 0.082 244) 100%);
+  color: oklch(98.5% 0.003 230);
+  border: 1px solid oklch(82% 0.065 232 / 0.28);
+  box-shadow:
+    inset 0 1px 0 oklch(96% 0.02 230 / 0.18),
+    0 14px 34px -16px oklch(14% 0.05 246 / 0.42);
+}
+:root[data-theme="dark"] .lp-ocean-card {
+  background:
+    radial-gradient(125% 95% at 10% 0%, oklch(42% 0.125 234 / 0.52), transparent 64%),
+    radial-gradient(95% 80% at 95% 100%, oklch(30% 0.095 222 / 0.40), transparent 65%),
+    linear-gradient(155deg, oklch(31% 0.105 240) 0%, oklch(22% 0.082 244) 100%);
+  border-color: oklch(78% 0.090 232 / 0.34);
+  box-shadow:
+    inset 0 1px 0 oklch(95% 0.03 230 / 0.20),
+    0 16px 36px -16px oklch(10% 0.025 244 / 0.45);
+}
+
+.lp-ocean-subcard {
+  background: oklch(98% 0.01 235 / 0.11);
+  border: 1px solid oklch(95% 0.02 232 / 0.22);
+  backdrop-filter: blur(8px);
+}
+
+/* Botão líquido interativo compartilhado */
+.btn-water-pill {
+  position: relative;
+  overflow: hidden;
+  --mx: 50%;
+  --my: 50%;
+  transition: transform 220ms ease, box-shadow 260ms ease, background-color 220ms ease, opacity 200ms ease;
+}
+.btn-water-pill::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(
+    130px circle at var(--mx) var(--my),
+    oklch(82% 0.11 210 / 0.42),
+    oklch(52% 0.16 234 / 0.18) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+.btn-water-pill:hover::before {
+  opacity: 1;
+}
+.btn-water-pill:hover {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   SISTEMA LOGADO: SUPERFÍCIE TONAL EM DEGRAU (100% OKLCH · SEM BORDAS/SOMBRAS)
+   SCOPED EM .sys-paper-shell — NÃO AFETA LANDING PAGE NEM AUTH
+   ========================================================================== */
+:root .sys-paper-shell {
+  --sys-rail-bg: oklch(98.6% 0.002 242);
+  --sys-rail-surface: oklch(100% 0 0);
+  --sys-rail-border: transparent;
+  --sys-rail-hover: oklch(96.4% 0.004 242);
+  --sys-rail-hover-border: transparent;
+  --sys-rail-muted: oklch(48% 0.015 245);
+  --sys-rail-active-bg: oklch(95.2% 0.007 242);
+  --sys-rail-active-ink: oklch(19% 0.024 245);
+  --sys-rail-ink: oklch(20% 0.024 245);
+
+  --sys-sheet-bg: oklch(96.8% 0.003 242);
+  --sys-sheet-subtle: oklch(95.6% 0.004 242);
+  --sys-sheet-muted: oklch(92.4% 0.007 242);
+  --sys-card-bg: oklch(100% 0 0);
+  --sys-input-bg: oklch(100% 0 0);
+  --sys-combobox-border: transparent;
+  --sys-border: oklch(91% 0.006 242);
+  --sys-border-strong: transparent;
+  --sys-border-hover: oklch(80% 0.012 242);
+
+  --sys-ink: oklch(19% 0.022 245);
+  --sys-ink-2: oklch(44% 0.016 245);
+  --sys-ink-3: oklch(56% 0.012 245);
+  --sys-ink-dim: oklch(67% 0.010 245);
+
+  --sys-brand: oklch(41% 0.112 244);
+  --sys-brand-hover: oklch(35% 0.118 244);
+  --sys-brand-ink: oklch(99% 0.002 245);
+  --sys-brand-subtext: oklch(90% 0.030 244);
+  --sys-brand-soft: oklch(41% 0.112 244 / 0.12);
+  --sys-link: var(--sys-brand);
+
+  /* Indicadores discretos (tom sobre tom sem caixas coloridas) */
+  --sys-dot-ok: oklch(58% 0.110 236);
+  --sys-dot-warn: oklch(72% 0.125 78);
+  --sys-dot-high: oklch(64% 0.135 55);
+  --sys-dot-crit: oklch(57% 0.165 26);
+
+  --sys-ok-text: var(--sys-ink-2);
+  --sys-warn-text: var(--sys-ink);
+  --sys-high-text: oklch(43% 0.105 52);
+  --sys-crit-text: oklch(44% 0.135 26);
+
+  --color-canvas: var(--sys-sheet-bg);
+  --color-surface: var(--sys-card-bg);
+  --color-surface-subtle: var(--sys-sheet-subtle);
+  --color-surface-muted: var(--sys-sheet-muted);
+  --color-surface-elevated: var(--sys-card-bg);
+  --color-border-editorial: var(--sys-border);
+  --color-border-subtle: var(--sys-sheet-muted);
+  --color-text-primary: var(--sys-ink);
+  --color-text-secondary: var(--sys-ink-2);
+  --color-text-muted: var(--sys-ink-3);
+  --color-brand-primary: var(--sys-brand);
+  --color-accent: var(--sys-brand);
+  --color-accent-primary: var(--sys-brand);
+  --color-risk-low-bg: var(--sys-sheet-subtle);
+  --color-risk-low-text: var(--sys-ok-text);
+  --color-risk-low-border: transparent;
+  --color-risk-medium-bg: var(--sys-sheet-subtle);
+  --color-risk-medium-text: var(--sys-warn-text);
+  --color-risk-medium-border: transparent;
+  --color-risk-high-bg: var(--sys-sheet-subtle);
+  --color-risk-high-text: var(--sys-high-text);
+  --color-risk-high-border: transparent;
+  --color-risk-critical-bg: var(--sys-sheet-subtle);
+  --color-risk-critical-text: var(--sys-crit-text);
+  --color-risk-critical-border: transparent;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] .sys-paper-shell {
+  --sys-rail-bg: oklch(18.6% 0.012 244);
+  --sys-rail-surface: oklch(25.2% 0.016 244);
+  --sys-rail-border: transparent;
+  --sys-rail-hover: oklch(22.2% 0.014 244);
+  --sys-rail-hover-border: transparent;
+  --sys-rail-muted: oklch(68% 0.012 240);
+  --sys-rail-active-bg: oklch(24.6% 0.016 244);
+  --sys-rail-active-ink: oklch(93% 0.005 240);
+  --sys-rail-ink: oklch(91.5% 0.006 240);
+
+  --sys-sheet-bg: oklch(16.0% 0.011 244);
+  --sys-sheet-subtle: oklch(25.6% 0.015 244);
+  --sys-sheet-muted: oklch(29.8% 0.017 244);
+  --sys-card-bg: oklch(21.2% 0.014 244);
+  --sys-input-bg: oklch(21.2% 0.014 244);
+  --sys-combobox-border: transparent;
+  --sys-border: oklch(28.5% 0.015 244);
+  --sys-border-strong: transparent;
+  --sys-border-hover: oklch(36% 0.020 244);
+
+  --sys-ink: oklch(91.5% 0.005 240);
+  --sys-ink-2: oklch(74% 0.012 240);
+  --sys-ink-3: oklch(60% 0.012 240);
+  --sys-ink-dim: oklch(49% 0.012 240);
+
+  --sys-brand: oklch(49% 0.118 243);
+  --sys-brand-hover: oklch(54% 0.118 243);
+  --sys-brand-ink: oklch(98.5% 0.003 240);
+  --sys-brand-subtext: oklch(86% 0.028 243);
+  --sys-brand-soft: oklch(56% 0.110 242 / 0.22);
+  --sys-link: oklch(73% 0.095 236);
+
+  --sys-dot-ok: oklch(72% 0.110 236);
+  --sys-dot-warn: oklch(79% 0.120 78);
+  --sys-dot-high: oklch(77% 0.130 56);
+  --sys-dot-crit: oklch(73% 0.145 26);
+
+  --sys-ok-text: var(--sys-ink-2);
+  --sys-warn-text: var(--sys-ink);
+  --sys-high-text: oklch(84% 0.090 60);
+  --sys-crit-text: oklch(82% 0.110 26);
+
+  --color-canvas: var(--sys-sheet-bg);
+  --color-surface: var(--sys-card-bg);
+  --color-surface-subtle: var(--sys-sheet-subtle);
+  --color-surface-muted: var(--sys-sheet-muted);
+  --color-surface-elevated: var(--sys-sheet-subtle);
+  --color-border-editorial: var(--sys-border);
+  --color-border-subtle: var(--sys-sheet-muted);
+  --color-text-primary: var(--sys-ink);
+  --color-text-secondary: var(--sys-ink-2);
+  --color-text-muted: var(--sys-ink-3);
+  --color-brand-primary: var(--sys-brand);
+  --color-accent: var(--sys-brand);
+  --color-accent-primary: var(--sys-brand);
+  --color-risk-low-bg: var(--sys-sheet-subtle);
+  --color-risk-low-text: var(--sys-ok-text);
+  --color-risk-low-border: transparent;
+  --color-risk-medium-bg: var(--sys-sheet-subtle);
+  --color-risk-medium-text: var(--sys-warn-text);
+  --color-risk-medium-border: transparent;
+  --color-risk-high-bg: var(--sys-sheet-subtle);
+  --color-risk-high-text: var(--sys-high-text);
+  --color-risk-high-border: transparent;
+  --color-risk-critical-bg: var(--sys-sheet-subtle);
+  --color-risk-critical-text: var(--sys-crit-text);
+  --color-risk-critical-border: transparent;
+  color-scheme: dark;
+}
+
+.sys-paper-shell {
+  --sys-sidebar-w: 68px;
+  background-color: var(--sys-sheet-bg);
+  color: var(--sys-ink);
+  font-family: var(--font-sans, "Inter", ui-sans-serif, system-ui, sans-serif);
+}
+
+:root[data-sidebar="expanded"] .sys-paper-shell {
+  --sys-sidebar-w: 224px;
+}
+
+.sys-sidebar-aside {
+  width: var(--sys-sidebar-w);
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sys-main-wrap {
+  transition: padding-left 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1024px) {
+  .sys-main-wrap {
+    padding-left: var(--sys-sidebar-w);
+  }
+}
+
+.sys-sidebar-label {
+  display: none;
+}
+
+:root[data-sidebar="expanded"] .sys-sidebar-label {
+  display: inline;
+}
+
+:root[data-sidebar="expanded"] .sys-rail-tooltip {
+  display: none;
+}
+
+.sys-paper-sheet {
+  background-color: var(--sys-sheet-bg);
+  color: var(--sys-ink);
+}
+
+.sys-paper-shell .app-card,
+.sys-box {
+  background-color: var(--sys-card-bg);
+  border: 0 solid transparent;
+  border-radius: 12px;
+}
+
+.sys-box-subtle {
+  background-color: var(--sys-sheet-subtle);
+  border: 0 solid transparent;
+  border-radius: 10px;
+}
+
+.sys-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background-color: var(--sys-input-bg);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.875rem;
+  color: var(--sys-ink);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.sys-input::placeholder {
+  color: var(--sys-ink-3);
+}
+
+.sys-input:hover:not(:focus) {
+  background-color: var(--sys-rail-active-bg);
+}
+
+.sys-input:focus {
+  outline: none;
+  border-color: var(--sys-link, var(--sys-brand));
+}
+
+.sys-box .sys-input,
+.sys-box [role="combobox"] {
+  background-color: var(--sys-sheet-subtle);
+}
+
+.sys-box .sys-input:hover:not(:focus),
+.sys-box [role="combobox"]:hover {
+  background-color: var(--sys-sheet-muted);
+}
+
+textarea.sys-input {
+  min-height: 76px;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.sys-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 36px;
+  padding: 0 15px;
+  border-radius: 9px;
+  background-color: var(--sys-brand);
+  color: var(--sys-brand-ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 0 solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.sys-btn-primary:hover:not(:disabled) {
+  background-color: var(--sys-brand-hover);
+}
+
+.sys-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sys-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 9px;
+  background-color: var(--sys-card-bg);
+  color: var(--sys-ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 0 solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.sys-btn-secondary:hover:not(:disabled) {
+  background-color: var(--sys-rail-hover);
+}
+
+.sys-box .sys-btn-secondary {
+  background-color: var(--sys-sheet-subtle);
+}
+
+.sys-box .sys-btn-secondary:hover:not(:disabled) {
+  background-color: var(--sys-sheet-muted);
+}
+
+.sys-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sys-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--sys-ink-2);
+  line-height: 1.3;
+}
+
+.sys-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.sys-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 3px 9px;
+  border-radius: 8px;
+  border: 0 solid transparent;
+  background-color: var(--sys-sheet-subtle);
+  color: var(--sys-ink-2);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.sys-pill-ok,
+.sys-pill-warn,
+.sys-pill-high,
+.sys-pill-crit,
+.sys-pill-neutral {
+  background-color: var(--sys-sheet-subtle);
+  color: var(--sys-ink-2);
+}
+
+.sys-pill-high,
+.sys-pill-crit {
+  color: var(--sys-crit-text);
+}
+
+.sys-rail-item {
+  position: relative;
+}
+
+.sys-rail-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: var(--sys-rail-surface);
+  color: var(--sys-ink);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease, transform 140ms ease;
+  z-index: 60;
+}
+
+.sys-rail-item:hover .sys-rail-tooltip,
+.sys-rail-item:focus-visible .sys-rail-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
