@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import AlertHistoryFeed from '../features/alerts/AlertHistoryFeed';
+---
+
+<EditorialLayout
+  title="Histórico de Alertas — Maré Alerta | Belém/PA"
+  activeNav="/historico"
+>
+  <AlertHistoryFeed client:load />
+</EditorialLayout>
