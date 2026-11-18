@@ -67,6 +67,11 @@ const slides = [
     </noscript>
     <script is:inline>
       (function () {
+        var getSystemDark = function () {
+          return Boolean(
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+        };
         try {
           var params = new URLSearchParams(window.location.search);
           var qTheme = params.get('theme');
@@ -76,12 +81,18 @@ const slides = [
               ? qTheme
               : stored === 'dark' || stored === 'light'
                 ? stored
-                : 'light';
+                : getSystemDark()
+                  ? 'dark'
+                  : 'light';
+          if (qTheme === 'dark' || qTheme === 'light') {
+            localStorage.setItem('mare-alerta-theme', theme);
+          }
           document.documentElement.setAttribute('data-theme', theme);
           var meta = document.getElementById('meta-theme-color');
           if (meta) meta.setAttribute('content', theme === 'dark' ? '#243044' : '#f4f6f9');
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          var fallbackTheme = getSystemDark() ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', fallbackTheme);
         }
       })();
     </script>
@@ -382,6 +393,30 @@ const slides = [
         });
 
         startTimer();
+
+        var colorSchemeQuery = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)')
+          : null;
+        if (colorSchemeQuery) {
+          var onSystemThemeChange = function (ev) {
+            var hasManual = false;
+            try {
+              var saved = localStorage.getItem('mare-alerta-theme');
+              hasManual = saved === 'dark' || saved === 'light';
+            } catch (e) {}
+            if (hasManual) return;
+            var nextTheme = ev.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            var meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', nextTheme === 'dark' ? '#243044' : '#f4f6f9');
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: nextTheme }));
+          };
+          if (typeof colorSchemeQuery.addEventListener === 'function') {
+            colorSchemeQuery.addEventListener('change', onSystemThemeChange);
+          } else if (typeof colorSchemeQuery.addListener === 'function') {
+            colorSchemeQuery.addListener(onSystemThemeChange);
+          }
+        }
 
         if ('serviceWorker' in navigator) {
           var isLocal =

@@ -59,6 +59,11 @@ function isActiveRoute(href: string): boolean {
     </noscript>
     <script is:inline>
       (function () {
+        var getSystemDark = function () {
+          return Boolean(
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+        };
         try {
           var qTheme = new URLSearchParams(window.location.search).get('theme');
           var stored = localStorage.getItem('mare-alerta-theme');
@@ -67,7 +72,12 @@ function isActiveRoute(href: string): boolean {
               ? qTheme
               : stored === 'dark' || stored === 'light'
                 ? stored
-                : 'light';
+                : getSystemDark()
+                  ? 'dark'
+                  : 'light';
+          if (qTheme === 'dark' || qTheme === 'light') {
+            localStorage.setItem('mare-alerta-theme', theme);
+          }
           document.documentElement.setAttribute('data-theme', theme);
           var meta = document.getElementById('sys-meta-theme-color');
           if (meta) meta.setAttribute('content', theme === 'dark' ? '#121820' : '#f1f4f8');
@@ -78,7 +88,7 @@ function isActiveRoute(href: string): boolean {
             sidePref === 'expanded' ? 'expanded' : 'collapsed'
           );
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute('data-theme', getSystemDark() ? 'dark' : 'light');
           document.documentElement.setAttribute('data-sidebar', 'collapsed');
         }
       })();
@@ -424,6 +434,30 @@ function isActiveRoute(href: string): boolean {
         var themeBtnMob = document.getElementById('sys-theme-toggle-mobile');
         if (themeBtnDesk) themeBtnDesk.addEventListener('click', toggleSystemTheme);
         if (themeBtnMob) themeBtnMob.addEventListener('click', toggleSystemTheme);
+
+        var colorSchemeQuery = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)')
+          : null;
+        if (colorSchemeQuery) {
+          var onSystemThemeChange = function (ev) {
+            var hasManual = false;
+            try {
+              var saved = localStorage.getItem('mare-alerta-theme');
+              hasManual = saved === 'dark' || saved === 'light';
+            } catch (e) {}
+            if (hasManual) return;
+            var nextTheme = ev.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            var meta = document.getElementById('sys-meta-theme-color');
+            if (meta) meta.setAttribute('content', nextTheme === 'dark' ? '#121820' : '#f1f4f8');
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: nextTheme }));
+          };
+          if (typeof colorSchemeQuery.addEventListener === 'function') {
+            colorSchemeQuery.addEventListener('change', onSystemThemeChange);
+          } else if (typeof colorSchemeQuery.addListener === 'function') {
+            colorSchemeQuery.addListener(onSystemThemeChange);
+          }
+        }
 
         if (openBtn) openBtn.addEventListener('click', function () { setDrawer(true); });
         if (closeBtn) closeBtn.addEventListener('click', function () { setDrawer(false); });

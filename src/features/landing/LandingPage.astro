@@ -72,6 +72,11 @@ const jsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={jsonLd} />
     <script is:inline>
       (function () {
+        var getSystemDark = function () {
+          return Boolean(
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+        };
         try {
           var params = new URLSearchParams(window.location.search);
           var qTheme = params.get('theme');
@@ -81,7 +86,9 @@ const jsonLd = JSON.stringify({
               ? qTheme
               : stored === 'dark' || stored === 'light'
                 ? stored
-                : 'light';
+                : getSystemDark()
+                  ? 'dark'
+                  : 'light';
           if (qTheme === 'dark' || qTheme === 'light') {
             localStorage.setItem('mare-alerta-theme', theme);
           }
@@ -89,7 +96,7 @@ const jsonLd = JSON.stringify({
           var metaTheme = document.getElementById('meta-theme-color');
           if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0d131f' : '#f4f6f9');
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute('data-theme', getSystemDark() ? 'dark' : 'light');
         }
       })();
     </script>
@@ -270,7 +277,8 @@ const jsonLd = JSON.stringify({
 
       :root[data-theme="dark"] .brand-alerta-flow,
       #lp-navbar:not(.lp-navbar-on-light) .brand-alerta-flow,
-      #lp-mobile-menu .brand-alerta-flow {
+      #lp-mobile-menu .brand-alerta-flow,
+      .lp-ocean-footer .brand-alerta-flow {
         background: linear-gradient(
           115deg,
           oklch(62% 0.095 238) 0%,
@@ -458,27 +466,29 @@ const jsonLd = JSON.stringify({
         box-shadow: 0 24px 60px rgba(2, 8, 24, 0.42);
       }
 
-      /* Névoa costeira contínua e suave entre seções claras e faixas em azul oceânico */
+      /* Transição suave e discreta entre fundo claro/escuro e faixas oceânicas */
       .lp-mist-top,
-      .lp-mist-bottom,
-      .lp-mist-footer {
+      .lp-mist-bottom {
         position: absolute;
         left: 0;
         right: 0;
-        height: clamp(72px, 8.5vw, 128px);
+        height: clamp(56px, 6vh, 88px);
         pointer-events: none;
-        z-index: 15;
+        z-index: 2;
       }
       .lp-mist-top {
         top: -2px;
         background: linear-gradient(
           to bottom,
           var(--color-canvas) 0%,
-          color-mix(in oklch, var(--color-canvas) 92%, transparent) 14%,
-          color-mix(in oklch, var(--color-canvas) 72%, transparent) 30%,
-          color-mix(in oklch, var(--color-canvas) 44%, transparent) 50%,
-          color-mix(in oklch, var(--color-canvas) 20%, transparent) 72%,
-          color-mix(in oklch, var(--color-canvas) 6%, transparent) 88%,
+          color-mix(in oklch, var(--color-canvas) 84%, transparent) 7%,
+          color-mix(in oklch, var(--color-canvas) 62%, transparent) 16%,
+          color-mix(in oklch, var(--color-canvas) 40%, transparent) 27%,
+          color-mix(in oklch, var(--color-canvas) 23%, transparent) 40%,
+          color-mix(in oklch, var(--color-canvas) 12%, transparent) 54%,
+          color-mix(in oklch, var(--color-canvas) 5%, transparent) 68%,
+          color-mix(in oklch, var(--color-canvas) 1.8%, transparent) 81%,
+          color-mix(in oklch, var(--color-canvas) 0.4%, transparent) 92%,
           transparent 100%
         );
       }
@@ -487,28 +497,21 @@ const jsonLd = JSON.stringify({
         background: linear-gradient(
           to top,
           var(--color-canvas) 0%,
-          color-mix(in oklch, var(--color-canvas) 92%, transparent) 14%,
-          color-mix(in oklch, var(--color-canvas) 72%, transparent) 30%,
-          color-mix(in oklch, var(--color-canvas) 44%, transparent) 50%,
-          color-mix(in oklch, var(--color-canvas) 20%, transparent) 72%,
-          color-mix(in oklch, var(--color-canvas) 6%, transparent) 88%,
+          color-mix(in oklch, var(--color-canvas) 84%, transparent) 7%,
+          color-mix(in oklch, var(--color-canvas) 62%, transparent) 16%,
+          color-mix(in oklch, var(--color-canvas) 40%, transparent) 27%,
+          color-mix(in oklch, var(--color-canvas) 23%, transparent) 40%,
+          color-mix(in oklch, var(--color-canvas) 12%, transparent) 54%,
+          color-mix(in oklch, var(--color-canvas) 5%, transparent) 68%,
+          color-mix(in oklch, var(--color-canvas) 1.8%, transparent) 81%,
+          color-mix(in oklch, var(--color-canvas) 0.4%, transparent) 92%,
           transparent 100%
         );
       }
-      .lp-mist-top.lp-mist-lg,
-      .lp-mist-bottom.lp-mist-lg {
-        height: clamp(96px, 11.5vw, 168px);
-      }
-      .lp-mist-footer {
+      .lp-mist-bottom.lp-mist-hero {
+        top: 0;
         bottom: -2px;
-        height: clamp(28px, 3.5vw, 48px);
-        background: linear-gradient(
-          to top,
-          var(--color-surface) 0%,
-          color-mix(in oklch, var(--color-surface) 76%, transparent) 28%,
-          color-mix(in oklch, var(--color-surface) 38%, transparent) 64%,
-          transparent 100%
-        );
+        height: auto;
       }
 
       .final-cta-stage {
@@ -517,20 +520,17 @@ const jsonLd = JSON.stringify({
           radial-gradient(68% 60% at 50% 48%, oklch(28% 0.088 242 / 0.66) 0%, transparent 74%),
           linear-gradient(180deg, oklch(18% 0.060 245) 0%, oklch(12% 0.040 246) 100%);
       }
-      .final-cta-stage .lp-mist-top {
-        height: clamp(48px, 5.5vw, 84px);
-        background: linear-gradient(
-          to bottom,
-          var(--color-canvas) 0%,
-          color-mix(in oklch, var(--color-canvas) 80%, transparent) 24%,
-          color-mix(in oklch, var(--color-canvas) 40%, transparent) 58%,
-          transparent 100%
-        );
-      }
       :root[data-theme="dark"] .final-cta-stage {
         background:
           radial-gradient(66% 58% at 50% 48%, oklch(21% 0.068 245 / 0.54) 0%, transparent 72%),
           linear-gradient(180deg, oklch(12.5% 0.034 246) 0%, oklch(8% 0.016 246) 100%);
+      }
+
+      .lp-ocean-footer {
+        background: oklch(12% 0.040 246);
+      }
+      :root[data-theme="dark"] .lp-ocean-footer {
+        background: oklch(8% 0.016 246);
       }
 
       /* Animações das etapas do sistema */
@@ -792,7 +792,7 @@ const jsonLd = JSON.stringify({
       <section
         id="hero-sticky"
         data-nav-surface="dark"
-        class="relative min-h-dvh z-10 flex items-end overflow-hidden bg-[oklch(8.5%_0.016_246)]"
+        class="relative z-10 flex flex-col overflow-hidden bg-[oklch(8.5%_0.016_246)]"
       >
         <picture class="contents">
           <source media="(max-width: 767px)" type="image/avif" srcset="/images/guajara-orla-mobile.avif" />
@@ -824,39 +824,45 @@ const jsonLd = JSON.stringify({
           aria-hidden="true"
         ></div>
 
-        <div
-          id="hero-content"
-          class="relative z-10 max-w-7xl w-full mx-auto px-5 sm:px-10 pt-24 pb-12 sm:pt-32 sm:pb-20 lg:pb-24 will-change-transform"
-        >
-          <div class="max-w-2xl space-y-4 sm:space-y-5">
-            <h1 class="font-editorial text-[clamp(2.2rem,6.5vw,4.25rem)] font-medium tracking-tight text-white leading-[1.04]">
-              <span data-i18n="hero.titleLine1">{t.hero.titleLine1}</span>
-              <br />
-              <span data-i18n="hero.titleLine2" class="italic font-normal text-[oklch(84%_0.055_236)]">{t.hero.titleLine2}</span>
-            </h1>
+        <div class="relative z-10 min-h-dvh w-full flex items-end">
+          <div
+            id="hero-content"
+            class="max-w-7xl w-full mx-auto px-5 sm:px-10 pt-24 pb-12 sm:pt-32 sm:pb-20 lg:pb-24 will-change-transform"
+          >
+            <div class="max-w-2xl space-y-4 sm:space-y-5">
+              <h1 class="font-editorial text-[clamp(2.2rem,6.5vw,4.25rem)] font-medium tracking-tight text-white leading-[1.04]">
+                <span data-i18n="hero.titleLine1">{t.hero.titleLine1}</span>
+                <br />
+                <span data-i18n="hero.titleLine2" class="italic font-normal text-[oklch(84%_0.055_236)]">{t.hero.titleLine2}</span>
+              </h1>
 
-            <p data-i18n="hero.subtitle" class="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal">
-              {t.hero.subtitle}
-            </p>
+              <p data-i18n="hero.subtitle" class="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal">
+                {t.hero.subtitle}
+              </p>
 
-            <div class="flex flex-wrap items-center gap-3 pt-1 sm:pt-2">
-              <a
-                href="/cadastro"
-                class="btn-water-pill inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[oklch(34%_0.125_244)] text-white text-sm font-medium shadow-md"
-              >
-                <span class="relative z-10" data-i18n="hero.ctaSignUp">{t.hero.ctaSignUp}</span>
-                <span class="relative z-10" aria-hidden="true">→</span>
-              </a>
+              <div class="flex flex-wrap items-center gap-3 pt-1 sm:pt-2">
+                <a
+                  href="/cadastro"
+                  class="btn-water-pill inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[oklch(34%_0.125_244)] text-white text-sm font-medium shadow-md"
+                >
+                  <span class="relative z-10" data-i18n="hero.ctaSignUp">{t.hero.ctaSignUp}</span>
+                  <span class="relative z-10" aria-hidden="true">→</span>
+                </a>
 
-              <a
-                href="#rotina"
-                data-i18n="hero.ctaFeatures"
-                class="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-white/25 bg-black/35 backdrop-blur-md text-white text-sm font-medium hover:bg-white/15 transition-colors"
-              >
-                {t.hero.ctaFeatures}
-              </a>
+                <a
+                  href="#rotina"
+                  data-i18n="hero.ctaFeatures"
+                  class="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-white/25 bg-black/35 backdrop-blur-md text-white text-sm font-medium hover:bg-white/15 transition-colors"
+                >
+                  {t.hero.ctaFeatures}
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+
+        <div class="relative w-full h-[clamp(72px,8vh,112px)] pointer-events-none shrink-0" aria-hidden="true">
+          <div class="lp-mist-bottom lp-mist-hero"></div>
         </div>
       </section>
 
@@ -923,13 +929,13 @@ const jsonLd = JSON.stringify({
         class="relative z-20 h-[235dvh] bg-[oklch(11%_0.036_246)]"
       >
         <div class="lp-mist-top z-30" aria-hidden="true"></div>
-        <div class="sticky top-0 h-dvh w-full overflow-hidden">
+        <div class="lp-ocean-band sticky top-0 h-dvh w-full transition-colors duration-300">
           <!-- Camada base em azul oceânico profundo -->
           <div
             id="sobre-base-panel"
-            class="lp-ocean-band absolute inset-0 z-0 flex flex-col justify-center px-5 sm:px-10 pt-24 pb-8 sm:pt-28 sm:pb-10 transition-colors duration-300 will-change-transform"
+            class="absolute inset-0 z-0 flex flex-col justify-center px-5 sm:px-10 pt-32 pb-16 sm:pt-36 sm:pb-20"
           >
-            <div class="max-w-7xl w-full mx-auto space-y-4 sm:space-y-9">
+            <div id="sobre-base-inner" class="max-w-7xl w-full mx-auto space-y-4 sm:space-y-9 will-change-transform">
               <div class="reveal-item max-w-2xl space-y-2 sm:space-y-3">
                 <h2 data-i18n="sobre.title" class="font-editorial text-2xl min-[400px]:text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white leading-tight">
                   {t.sobre.title}
@@ -1299,10 +1305,10 @@ const jsonLd = JSON.stringify({
         <div
           id="como-funciona-header"
           data-nav-surface="dark"
-          class="lp-ocean-band relative min-h-[48svh] sm:min-h-[60svh] flex items-center transition-colors duration-300"
+          class="lp-ocean-band relative min-h-[54svh] sm:min-h-[62svh] flex items-center transition-colors duration-300"
         >
-          <div class="lp-mist-top lp-mist-lg" aria-hidden="true"></div>
-          <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-10 py-20 sm:py-32 lg:py-40 flex flex-col md:flex-row md:items-end justify-between gap-8 lg:gap-12">
+          <div class="lp-mist-top" aria-hidden="true"></div>
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-10 py-24 sm:py-32 lg:py-36 flex flex-col md:flex-row md:items-end justify-between gap-8 lg:gap-12">
             <div class="reveal-item max-w-2xl space-y-4">
               <div class="flex items-center gap-2.5 text-[11px] font-mono-data uppercase tracking-[0.16em] text-sky-200/80">
                 <span class="w-4 h-px bg-sky-200/50"></span>
@@ -1319,7 +1325,7 @@ const jsonLd = JSON.stringify({
               {t.comoFunciona.subtitle}
             </p>
           </div>
-          <div class="lp-mist-bottom lp-mist-lg" aria-hidden="true"></div>
+          <div class="lp-mist-bottom" aria-hidden="true"></div>
         </div>
 
         <!-- Passo 1 (Claro em Light mode / Obsidian em Dark mode) -->
@@ -1551,8 +1557,8 @@ const jsonLd = JSON.stringify({
         </section>
       </div>
 
-      <!-- Chamada final minimalista em azul oceânico profundo -->
-      <section data-nav-surface="dark" class="final-cta-stage relative z-20 min-h-[60svh] sm:min-h-[66svh] flex flex-col items-center justify-center px-5 sm:px-10 py-28 sm:py-36 text-center text-white">
+      <!-- Chamada final minimalista em azul oceânico profundo integrada ao rodapé -->
+      <section data-nav-surface="dark" class="final-cta-stage relative z-20 min-h-[58svh] sm:min-h-[64svh] flex flex-col items-center justify-center px-5 sm:px-10 pt-28 pb-20 sm:pt-36 sm:pb-28 text-center text-white">
         <div class="lp-mist-top" aria-hidden="true"></div>
         <div class="reveal-item relative z-10 max-w-2xl mx-auto space-y-7">
           <h2 class="font-editorial text-4xl sm:text-6xl lg:text-[4rem] font-medium tracking-tight leading-[1.03] text-white">
@@ -1577,28 +1583,27 @@ const jsonLd = JSON.stringify({
             <span data-i18n="finalCta.footnoteLine2">{t.finalCta.footnoteLine2}</span>
           </p>
         </div>
-        <div class="lp-mist-footer" aria-hidden="true"></div>
       </section>
     </main>
 
-    <!-- Rodapé editorial equilibrado em 3 colunas -->
-    <footer class="relative z-20 bg-[var(--color-surface)]">
-      <div class="max-w-7xl mx-auto px-5 sm:px-10 py-6 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-center md:text-left">
+    <!-- Rodapé editorial equilibrado em 3 colunas no fechamento oceânico -->
+    <footer data-nav-surface="dark" class="lp-ocean-footer relative z-20 border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-5 sm:px-10 py-7 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-center md:text-left">
         <div class="md:justify-self-start">
-          <a href="#hero-sticky" class="font-brand-jp text-xs sm:text-[13px] font-semibold tracking-[0.06em] text-[var(--color-text-primary)]">
+          <a href="#hero-sticky" class="font-brand-jp text-xs sm:text-[13px] font-semibold tracking-[0.06em] text-white">
             MARÉ <span class="brand-alerta-flow">ALERTA</span>
           </a>
         </div>
 
-        <nav aria-label={t.footer.ariaLabel} data-i18n-aria="footer.ariaLabel" class="md:justify-self-center flex flex-wrap items-center justify-center gap-5 sm:gap-7 text-xs sm:text-sm font-medium text-[var(--color-text-secondary)]">
-          <a href="#hero-sticky" data-i18n="footer.home" class="hover:text-[var(--color-text-primary)] transition-colors">{t.footer.home}</a>
-          <a href="#sobre" data-i18n="footer.about" class="hover:text-[var(--color-text-primary)] transition-colors">{t.footer.about}</a>
-          <a href="#rotina" data-i18n="footer.features" class="hover:text-[var(--color-text-primary)] transition-colors">{t.footer.features}</a>
-          <a href="#como-funciona" data-i18n="footer.howItWorks" class="hover:text-[var(--color-text-primary)] transition-colors">{t.footer.howItWorks}</a>
+        <nav aria-label={t.footer.ariaLabel} data-i18n-aria="footer.ariaLabel" class="md:justify-self-center flex flex-wrap items-center justify-center gap-5 sm:gap-7 text-xs sm:text-sm font-medium text-slate-300/80">
+          <a href="#hero-sticky" data-i18n="footer.home" class="hover:text-white transition-colors">{t.footer.home}</a>
+          <a href="#sobre" data-i18n="footer.about" class="hover:text-white transition-colors">{t.footer.about}</a>
+          <a href="#rotina" data-i18n="footer.features" class="hover:text-white transition-colors">{t.footer.features}</a>
+          <a href="#como-funciona" data-i18n="footer.howItWorks" class="hover:text-white transition-colors">{t.footer.howItWorks}</a>
         </nav>
 
         <div class="md:justify-self-end">
-          <span data-i18n="footer.copyright" class="text-xs text-[var(--color-text-muted)]">
+          <span data-i18n="footer.copyright" class="text-xs text-slate-400">
             {t.footer.copyright}
           </span>
         </div>
@@ -1663,6 +1668,7 @@ const jsonLd = JSON.stringify({
         var heroScrollShade = document.getElementById('hero-scroll-shade');
         var sobreSection = document.getElementById('sobre');
         var sobreBasePanel = document.getElementById('sobre-base-panel');
+        var sobreBaseInner = document.getElementById('sobre-base-inner');
         var sobreBaseDim = document.getElementById('sobre-base-dim');
         var splitRevealPanel = document.getElementById('split-reveal-panel');
         var sobreRevealRing = document.getElementById('sobre-reveal-ring');
@@ -1920,10 +1926,9 @@ const jsonLd = JSON.stringify({
           for (var i = 0; i < darkSurfaceBands.length; i++) {
             var band = darkSurfaceBands[i];
             var rect = band.getBoundingClientRect();
-            var topInset = band.id === 'hero-sticky' ? 0 : (band.id === 'como-funciona-header' ? 76 : 56);
-            var bottomInset = band.id === 'hero-sticky'
-              ? 18
-              : (band.classList.contains('final-cta-stage') ? 0 : (band.id === 'como-funciona-header' ? 76 : 56));
+            var isFooterBand = band.classList.contains('final-cta-stage') || band.classList.contains('lp-ocean-footer');
+            var topInset = band.id === 'hero-sticky' || band.classList.contains('lp-ocean-footer') ? 0 : 36;
+            var bottomInset = isFooterBand ? 0 : 44;
             if (rect.top + topInset <= probeY && rect.bottom - bottomInset > probeY) {
               overDark = true;
               break;
@@ -1940,10 +1945,8 @@ const jsonLd = JSON.stringify({
             var snapped = targetReveal >= 0.5 ? 1 : 0;
             splitRevealPanel.style.visibility = snapped ? 'visible' : 'hidden';
             splitRevealPanel.style.clipPath = snapped ? 'none' : 'circle(0px at 50% 50%)';
-            if (sobreBasePanel) {
-              sobreBasePanel.style.transform = 'none';
-              sobreBasePanel.style.visibility = snapped ? 'hidden' : 'visible';
-            }
+            if (sobreBaseInner) sobreBaseInner.style.transform = 'none';
+            if (sobreBasePanel) sobreBasePanel.style.visibility = snapped ? 'hidden' : 'visible';
             if (sobreBaseDim) sobreBaseDim.style.opacity = '0';
             if (sobreRevealRing) sobreRevealRing.style.opacity = '0';
             splitImgs.forEach(function (img) {
@@ -1992,9 +1995,11 @@ const jsonLd = JSON.stringify({
             img.style.transform = 'scale(' + imgScale.toFixed(4) + ')';
           });
 
-          if (sobreBasePanel) {
+          if (sobreBaseInner) {
             var baseScale = 1 - eased * 0.035;
-            sobreBasePanel.style.transform = 'scale(' + baseScale.toFixed(4) + ')';
+            sobreBaseInner.style.transform = 'scale(' + baseScale.toFixed(4) + ')';
+          }
+          if (sobreBasePanel) {
             sobreBasePanel.style.visibility = eased >= 0.995 ? 'hidden' : 'visible';
           }
           if (sobreBaseDim) {
@@ -2105,6 +2110,29 @@ const jsonLd = JSON.stringify({
             var next = cur === 'dark' ? 'light' : 'dark';
             applyLandingTheme(next, true);
           });
+        }
+
+        var colorSchemeQuery = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)')
+          : null;
+        if (colorSchemeQuery) {
+          var onSystemThemeChange = function (ev) {
+            var hasManual = false;
+            try {
+              var saved = localStorage.getItem('mare-alerta-theme');
+              hasManual = saved === 'dark' || saved === 'light';
+            } catch (e) {}
+            if (hasManual) return;
+            var next = ev.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            syncThemeControls(next);
+            updateNavbarContrast(next);
+          };
+          if (typeof colorSchemeQuery.addEventListener === 'function') {
+            colorSchemeQuery.addEventListener('change', onSystemThemeChange);
+          } else if (typeof colorSchemeQuery.addListener === 'function') {
+            colorSchemeQuery.addListener(onSystemThemeChange);
+          }
         }
 
         // Interação nos previews reais (Lightbox com troca Claro/Escuro + tilt suave nos smartphones)
