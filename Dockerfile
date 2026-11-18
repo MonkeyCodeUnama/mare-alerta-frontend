@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-ARG PUBLIC_API_BASE_URL=http://localhost:8080
+ARG PUBLIC_API_BASE_URL=https://ma-api.andr3dav1d.dev
 ENV PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
 
 COPY . .
