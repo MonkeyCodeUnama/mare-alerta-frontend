@@ -5,6 +5,9 @@ import icon from 'astro-icon';
 
 export default defineConfig({
   output: 'static',
+  build: {
+    inlineStylesheets: 'always',
+  },
   i18n: {
     defaultLocale: 'pt-br',
     locales: ['pt-br', 'en'],
