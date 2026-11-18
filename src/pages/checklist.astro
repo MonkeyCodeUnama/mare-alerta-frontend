@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import ChecklistManager from '../features/checklist/ChecklistManager';
+---
+
+<EditorialLayout
+  title="Checklist Preventivo — Maré Alerta | Belém/PA"
+  activeNav="/checklist"
+>
+  <ChecklistManager client:load />
+</EditorialLayout>

@@ -25,4 +25,7 @@ dist-ssr
 
 # Claude Code (configuração local)
 .claude/
+.astro/
 .env
+.env.*
+!.env.example

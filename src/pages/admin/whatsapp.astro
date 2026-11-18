@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../../layouts/EditorialLayout.astro';
+import WhatsappAdminPanel from '../../features/whatsapp/WhatsappAdminPanel';
+---
+
+<EditorialLayout
+  title="Painel WhatsApp — Maré Alerta | Belém/PA"
+  activeNav="/admin/whatsapp"
+>
+  <WhatsappAdminPanel client:load />
+</EditorialLayout>

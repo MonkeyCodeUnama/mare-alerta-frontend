@@ -1,0 +1,11 @@
+---
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import DashboardGrid from '../features/telemetry/DashboardGrid';
+---
+
+<EditorialLayout
+  title="Painel Operacional — Maré Alerta | Belém/PA"
+  activeNav="/dashboard"
+>
+  <DashboardGrid client:load />
+</EditorialLayout>

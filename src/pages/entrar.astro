@@ -1,0 +1,8 @@
+---
+import AuthLayout from '../layouts/AuthLayout.astro';
+import AuthForms from '../features/auth/AuthForms';
+---
+
+<AuthLayout title="Entrar — Maré Alerta" variant="login">
+  <AuthForms mode="login" client:load />
+</AuthLayout>

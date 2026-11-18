@@ -1,0 +1,2273 @@
+---
+import '../../shared/styles/global.css';
+import '../../shared/styles/water-pill.css';
+import { landingCopy, type LandingLocale } from '../../shared/i18n/landing';
+
+interface Props {
+  locale?: LandingLocale;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+const t = landingCopy[locale];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Maré Alerta',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web',
+  inLanguage: t.htmlLang,
+  description: t.meta.schemaDescription,
+});
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="theme-color" id="meta-theme-color" content="#f4f6f9" />
+    <link rel="alternate" hreflang="pt-BR" href="/" />
+    <link rel="alternate" hreflang="en" href="/en/" />
+    <link rel="alternate" hreflang="x-default" href="/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:image" content="/images/guajara-orla.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/guajara-orla-mobile.avif"
+      type="image/avif"
+      media="(max-width: 767px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/guajara-orla.avif"
+      type="image/avif"
+      media="(min-width: 768px)"
+      fetchpriority="high"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Shippori+Mincho:wght@500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Shippori+Mincho:wght@500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <script type="application/ld+json" set:html={jsonLd} />
+    <script is:inline>
+      (function () {
+        var getSystemDark = function () {
+          return Boolean(
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+        };
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var qTheme = params.get('theme');
+          var stored = localStorage.getItem('mare-alerta-theme');
+          var theme =
+            qTheme === 'dark' || qTheme === 'light'
+              ? qTheme
+              : stored === 'dark' || stored === 'light'
+                ? stored
+                : getSystemDark()
+                  ? 'dark'
+                  : 'light';
+          if (qTheme === 'dark' || qTheme === 'light') {
+            localStorage.setItem('mare-alerta-theme', theme);
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+          var metaTheme = document.getElementById('meta-theme-color');
+          if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0d131f' : '#f4f6f9');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', getSystemDark() ? 'dark' : 'light');
+        }
+      })();
+    </script>
+    <style>
+      /* Barra superior ponta a ponta estilo Delphi/211805 + links 211958 */
+      #lp-navbar {
+        --nav-text: oklch(97% 0.004 230);
+        --nav-link: oklch(90% 0.008 232 / 0.78);
+        --nav-link-hover: oklch(99% 0 0);
+        color: var(--nav-text);
+        transition: color 240ms ease;
+      }
+
+      #lp-navbar.lp-navbar-on-light {
+        --nav-text: oklch(16% 0.020 242);
+        --nav-link: oklch(32% 0.020 240 / 0.85);
+        --nav-link-hover: oklch(14% 0.024 244);
+      }
+
+      .lp-top-bar-backdrop {
+        position: absolute;
+        inset: 0 0 -18px 0;
+        pointer-events: none;
+        background: linear-gradient(
+          to bottom,
+          oklch(8% 0.022 246 / 0.78) 0%,
+          oklch(8% 0.022 246 / 0.42) 58%,
+          transparent 100%
+        );
+        backdrop-filter: blur(16px) saturate(145%);
+        -webkit-backdrop-filter: blur(16px) saturate(145%);
+        mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 100%);
+        transition: background 260ms ease, opacity 260ms ease;
+      }
+
+      #lp-navbar.lp-navbar-on-light .lp-top-bar-backdrop {
+        background: linear-gradient(
+          to bottom,
+          oklch(97% 0.005 235 / 0.88) 0%,
+          oklch(97% 0.005 235 / 0.56) 60%,
+          transparent 100%
+        );
+      }
+
+      .lp-nav-brand {
+        color: var(--nav-text);
+        transition: color 240ms ease;
+      }
+
+      .lp-nav-link {
+        color: var(--nav-link);
+        transition: color 200ms ease, opacity 150ms ease;
+      }
+      .lp-nav-link:hover {
+        color: var(--nav-link-hover);
+      }
+
+      [data-i18n] {
+        transition: opacity 150ms ease;
+      }
+      html.is-switching-lang [data-i18n] {
+        opacity: 0.25;
+      }
+      [data-landing-hidden] {
+        display: none !important;
+      }
+
+      /* Menu mobile fullscreen editorial adaptado à paleta oceânica Maré Alerta */
+      #lp-mobile-menu {
+        background:
+          radial-gradient(92% 60% at 80% 14%, oklch(32% 0.115 243 / 0.78), transparent 68%),
+          radial-gradient(76% 52% at 14% 88%, oklch(26% 0.095 246 / 0.55), transparent 65%),
+          linear-gradient(180deg, oklch(17.5% 0.068 246 / 0.985) 0%, oklch(11.5% 0.044 246 / 0.992) 100%);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        transition: opacity 240ms ease, transform 280ms cubic-bezier(0.22, 1, 0.36, 1), visibility 240ms ease;
+      }
+      :root[data-theme="dark"] #lp-mobile-menu {
+        background:
+          radial-gradient(90% 58% at 80% 14%, oklch(25% 0.088 244 / 0.70), transparent 68%),
+          radial-gradient(76% 52% at 14% 88%, oklch(20% 0.068 246 / 0.45), transparent 65%),
+          linear-gradient(180deg, oklch(14% 0.045 246 / 0.99) 0%, oklch(9% 0.024 246 / 0.995) 100%);
+      }
+      #lp-mobile-menu.is-closed {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+        visibility: hidden;
+      }
+      #lp-mobile-menu.is-open {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        visibility: visible;
+      }
+
+      .lp-mobile-item {
+        color: oklch(88% 0.025 232 / 0.50);
+        border-bottom: 1px solid oklch(78% 0.055 234 / 0.16);
+        transition: color 200ms ease, border-color 200ms ease;
+      }
+      .lp-mobile-item:hover {
+        color: oklch(97% 0.012 230 / 0.90);
+        border-bottom-color: oklch(78% 0.080 232 / 0.40);
+      }
+      .lp-mobile-item.is-active {
+        color: oklch(99% 0.004 230);
+        border-bottom-color: oklch(78% 0.105 232 / 0.85);
+      }
+
+      /* Véu no Hero adaptável para troca de tema clara e visível */
+      .hero-top-scrim {
+        opacity: 0.40;
+        background: linear-gradient(
+          to bottom,
+          oklch(12% 0.020 244 / 0.42) 0%,
+          oklch(12% 0.016 244 / 0.14) 55%,
+          transparent 100%
+        );
+      }
+      :root[data-theme="dark"] .hero-top-scrim {
+        opacity: 1;
+      }
+
+      .hero-theme-veil {
+        background: linear-gradient(
+          to top,
+          oklch(10% 0.025 246 / 0.80) 0%,
+          oklch(18% 0.036 244 / 0.30) 48%,
+          transparent 100%
+        );
+        transition: background 300ms ease, opacity 300ms ease;
+      }
+      :root[data-theme="dark"] .hero-theme-veil {
+        background: linear-gradient(
+          to top,
+          oklch(6% 0.018 246 / 0.94) 0%,
+          oklch(10% 0.024 246 / 0.56) 52%,
+          oklch(8% 0.018 246 / 0.25) 100%
+        );
+      }
+
+      /* Fonte japonesa Mincho para a marca MARÉ ALERTA */
+      .font-brand-jp {
+        font-family: 'Shippori Mincho', Georgia, serif;
+        letter-spacing: 0.04em;
+      }
+
+      /* Azul escuro oceânico animado apenas para a palavra ALERTA */
+      @keyframes alertaFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .brand-alerta-flow {
+        background: linear-gradient(
+          115deg,
+          oklch(22% 0.085 246) 0%,
+          oklch(38% 0.115 240) 34%,
+          oklch(52% 0.095 232) 50%,
+          oklch(38% 0.115 240) 66%,
+          oklch(22% 0.085 246) 100%
+        );
+        background-size: 220% 220%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: alertaFlow 5.5s ease-in-out infinite;
+      }
+
+      :root[data-theme="dark"] .brand-alerta-flow,
+      #lp-navbar:not(.lp-navbar-on-light) .brand-alerta-flow,
+      #lp-mobile-menu .brand-alerta-flow,
+      .lp-ocean-footer .brand-alerta-flow {
+        background: linear-gradient(
+          115deg,
+          oklch(62% 0.095 238) 0%,
+          oklch(76% 0.085 230) 34%,
+          oklch(88% 0.035 225) 50%,
+          oklch(76% 0.085 230) 66%,
+          oklch(62% 0.095 238) 100%
+        );
+        background-size: 220% 220%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* Botão compacto animado de alternância de tema (Sol <-> Lua) sem card */
+      #landing-theme-btn svg {
+        transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease, color 220ms ease;
+      }
+      #theme-icon-sun {
+        color: oklch(86% 0.14 82);
+      }
+      #lp-navbar.lp-navbar-on-light #theme-icon-sun {
+        color: oklch(58% 0.17 68);
+      }
+      #theme-icon-moon {
+        color: oklch(82% 0.095 230);
+      }
+      :root:not([data-theme="dark"]) #theme-icon-sun {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      }
+      :root:not([data-theme="dark"]) #theme-icon-moon {
+        opacity: 0;
+        transform: rotate(-45deg) scale(0.65);
+      }
+      :root[data-theme="dark"] #theme-icon-sun {
+        opacity: 0;
+        transform: rotate(45deg) scale(0.65);
+      }
+      :root[data-theme="dark"] #theme-icon-moon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      }
+
+      /* Botão com reflexo líquido direcionado pelo ponteiro */
+      .btn-water-pill {
+        position: relative;
+        overflow: hidden;
+        --mx: 50%;
+        --my: 50%;
+        transition: transform 220ms ease, box-shadow 260ms ease, background-color 220ms ease;
+      }
+      .btn-water-pill::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: radial-gradient(
+          130px circle at var(--mx) var(--my),
+          oklch(82% 0.11 210 / 0.42),
+          oklch(52% 0.16 234 / 0.18) 45%,
+          transparent 72%
+        );
+        opacity: 0;
+        transition: opacity 260ms ease;
+        pointer-events: none;
+      }
+      .btn-water-pill:hover::before {
+        opacity: 1;
+      }
+      .btn-water-pill:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Revelação progressiva dos blocos */
+      .reveal-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .reveal-item.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal-item {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+
+      /* Palco azul marinho + preto coeso entre Light e Dark mode */
+      .routine-card-1 {
+        background: radial-gradient(120% 90% at 15% 8%, oklch(24% 0.068 246), transparent 62%),
+          linear-gradient(160deg, oklch(15% 0.042 246) 0%, oklch(8.5% 0.016 246) 100%);
+      }
+      .routine-card-2 {
+        background: radial-gradient(120% 90% at 50% 8%, oklch(26% 0.072 240), transparent 62%),
+          linear-gradient(160deg, oklch(14.5% 0.044 242) 0%, oklch(8.5% 0.015 246) 100%);
+      }
+      .routine-card-3 {
+        background: radial-gradient(120% 90% at 85% 8%, oklch(24% 0.064 248), transparent 62%),
+          linear-gradient(160deg, oklch(15% 0.040 246) 0%, oklch(8.5% 0.016 246) 100%);
+      }
+
+      .step-stage {
+        background:
+          radial-gradient(105% 80% at 18% 14%, oklch(24% 0.065 245 / 0.85), transparent 60%),
+          radial-gradient(90% 75% at 86% 86%, oklch(20% 0.045 238 / 0.60), transparent 58%),
+          linear-gradient(160deg, oklch(13% 0.032 246) 0%, oklch(8% 0.015 246) 100%);
+      }
+
+      /* Carcaça de Smartphone vertical fiel à referência dark titanium */
+      .phone-bezel {
+        position: relative;
+        background: linear-gradient(160deg, oklch(21% 0.020 244) 0%, oklch(9% 0.012 246) 55%, oklch(16% 0.016 244) 100%);
+        border: 1.5px solid oklch(38% 0.024 240 / 0.72);
+        box-shadow:
+          0 28px 65px rgba(2, 6, 16, 0.56),
+          inset 0 1px 0 oklch(85% 0.015 235 / 0.24);
+      }
+      .phone-bezel::before {
+        content: "";
+        position: absolute;
+        left: -3.5px;
+        top: 96px;
+        width: 2.5px;
+        height: 32px;
+        border-radius: 3px 0 0 3px;
+        background: oklch(34% 0.020 240 / 0.85);
+        box-shadow: 0 44px 0 oklch(34% 0.020 240 / 0.85);
+      }
+      .phone-bezel::after {
+        content: "";
+        position: absolute;
+        right: -3.5px;
+        top: 112px;
+        width: 2.5px;
+        height: 48px;
+        border-radius: 0 3px 3px 0;
+        background: oklch(34% 0.020 240 / 0.85);
+      }
+      .phone-screen {
+        background: oklch(96.8% 0.003 242);
+        border: 1px solid oklch(28% 0.020 242 / 0.65);
+      }
+      :root[data-theme="dark"] .phone-screen {
+        background: oklch(16.0% 0.011 244);
+      }
+      .phone-notch-bar {
+        background: oklch(98.6% 0.002 242);
+      }
+      :root[data-theme="dark"] .phone-notch-bar {
+        background: oklch(18.6% 0.012 244);
+      }
+
+      .lp-preview-dark {
+        display: none;
+      }
+      :root[data-theme="dark"] .lp-preview-light {
+        display: none;
+      }
+      :root[data-theme="dark"] .lp-preview-dark {
+        display: block;
+      }
+
+      /* Banda azul oceânico profundo (Light e Dark mode) */
+      .lp-ocean-band {
+        overflow: hidden;
+        background:
+          radial-gradient(76% 62% at 50% 46%, oklch(28% 0.088 242 / 0.68) 0%, transparent 74%),
+          linear-gradient(180deg, oklch(18.5% 0.062 245) 0%, oklch(12.5% 0.042 246) 100%);
+        color: oklch(97.5% 0.004 230);
+      }
+      :root[data-theme="dark"] .lp-ocean-band {
+        background:
+          radial-gradient(78% 64% at 50% 45%, oklch(21% 0.068 245 / 0.56) 0%, transparent 72%),
+          linear-gradient(180deg, oklch(13% 0.036 246) 0%, oklch(8.5% 0.018 246) 100%);
+      }
+      .lp-ocean-band .step-stage {
+        background:
+          radial-gradient(105% 80% at 18% 14%, oklch(28% 0.078 244 / 0.65), transparent 60%),
+          linear-gradient(160deg, oklch(13.5% 0.040 246 / 0.90) 0%, oklch(8.5% 0.020 246 / 0.94) 100%);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 24px 60px rgba(2, 8, 24, 0.42);
+      }
+
+      /* Transição suave e discreta entre fundo claro/escuro e faixas oceânicas */
+      .lp-mist-top,
+      .lp-mist-bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: clamp(56px, 6vh, 88px);
+        pointer-events: none;
+        z-index: 2;
+      }
+      .lp-mist-top {
+        top: -2px;
+        background: linear-gradient(
+          to bottom,
+          var(--color-canvas) 0%,
+          color-mix(in oklch, var(--color-canvas) 84%, transparent) 7%,
+          color-mix(in oklch, var(--color-canvas) 62%, transparent) 16%,
+          color-mix(in oklch, var(--color-canvas) 40%, transparent) 27%,
+          color-mix(in oklch, var(--color-canvas) 23%, transparent) 40%,
+          color-mix(in oklch, var(--color-canvas) 12%, transparent) 54%,
+          color-mix(in oklch, var(--color-canvas) 5%, transparent) 68%,
+          color-mix(in oklch, var(--color-canvas) 1.8%, transparent) 81%,
+          color-mix(in oklch, var(--color-canvas) 0.4%, transparent) 92%,
+          transparent 100%
+        );
+      }
+      .lp-mist-bottom {
+        bottom: -2px;
+        background: linear-gradient(
+          to top,
+          var(--color-canvas) 0%,
+          color-mix(in oklch, var(--color-canvas) 84%, transparent) 7%,
+          color-mix(in oklch, var(--color-canvas) 62%, transparent) 16%,
+          color-mix(in oklch, var(--color-canvas) 40%, transparent) 27%,
+          color-mix(in oklch, var(--color-canvas) 23%, transparent) 40%,
+          color-mix(in oklch, var(--color-canvas) 12%, transparent) 54%,
+          color-mix(in oklch, var(--color-canvas) 5%, transparent) 68%,
+          color-mix(in oklch, var(--color-canvas) 1.8%, transparent) 81%,
+          color-mix(in oklch, var(--color-canvas) 0.4%, transparent) 92%,
+          transparent 100%
+        );
+      }
+      .lp-mist-bottom.lp-mist-hero {
+        top: 0;
+        bottom: -2px;
+        height: auto;
+      }
+
+      .final-cta-stage {
+        overflow: hidden;
+        background:
+          radial-gradient(68% 60% at 50% 48%, oklch(28% 0.088 242 / 0.66) 0%, transparent 74%),
+          linear-gradient(180deg, oklch(18% 0.060 245) 0%, oklch(12% 0.040 246) 100%);
+      }
+      :root[data-theme="dark"] .final-cta-stage {
+        background:
+          radial-gradient(66% 58% at 50% 48%, oklch(21% 0.068 245 / 0.54) 0%, transparent 72%),
+          linear-gradient(180deg, oklch(12.5% 0.034 246) 0%, oklch(8% 0.016 246) 100%);
+      }
+
+      .lp-ocean-footer {
+        background: oklch(12% 0.040 246);
+      }
+      :root[data-theme="dark"] .lp-ocean-footer {
+        background: oklch(8% 0.016 246);
+      }
+
+      /* Animações das etapas do sistema */
+      @keyframes chipHighlight1 {
+        0%, 100% { border-color: oklch(58% 0.14 236 / 0.8); background-color: oklch(24% 0.038 236 / 0.72); }
+        45%, 80% { border-color: oklch(34% 0.016 232 / 0.35); background-color: oklch(19% 0.014 234 / 0.6); }
+      }
+      @keyframes chipHighlight2 {
+        0%, 28% { border-color: oklch(34% 0.016 232 / 0.35); background-color: oklch(19% 0.014 234 / 0.6); }
+        34%, 64% { border-color: oklch(58% 0.14 236 / 0.8); background-color: oklch(24% 0.038 236 / 0.72); }
+        70%, 100% { border-color: oklch(34% 0.016 232 / 0.35); background-color: oklch(19% 0.014 234 / 0.6); }
+      }
+      @keyframes chipHighlight3 {
+        0%, 60% { border-color: oklch(34% 0.016 232 / 0.35); background-color: oklch(19% 0.014 234 / 0.6); }
+        68%, 94% { border-color: oklch(58% 0.14 236 / 0.8); background-color: oklch(24% 0.038 236 / 0.72); }
+        100% { border-color: oklch(34% 0.016 232 / 0.35); background-color: oklch(19% 0.014 234 / 0.6); }
+      }
+      .anim-chip-1 { animation: chipHighlight1 6s ease-in-out infinite; }
+      .anim-chip-2 { animation: chipHighlight2 6s ease-in-out infinite; }
+      .anim-chip-3 { animation: chipHighlight3 6s ease-in-out infinite; }
+
+      @keyframes tideWaveDrift {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .anim-wave-track {
+        animation: tideWaveDrift 7s linear infinite;
+      }
+
+      @keyframes checkRowActive1 {
+        0%, 15% { opacity: 0.55; }
+        22%, 90% { opacity: 1; }
+        100% { opacity: 0.55; }
+      }
+      @keyframes checkRowActive2 {
+        0%, 42% { opacity: 0.55; }
+        50%, 90% { opacity: 1; }
+        100% { opacity: 0.55; }
+      }
+      @keyframes checkRowActive3 {
+        0%, 68% { opacity: 0.55; }
+        75%, 94% { opacity: 1; }
+        100% { opacity: 0.55; }
+      }
+      .anim-check-1 { animation: checkRowActive1 6.4s ease-in-out infinite; }
+      .anim-check-2 { animation: checkRowActive2 6.4s ease-in-out infinite; }
+      .anim-check-3 { animation: checkRowActive3 6.4s ease-in-out infinite; }
+
+      @keyframes scanSweep {
+        0% { transform: translateY(-100%); opacity: 0; }
+        18% { opacity: 0.85; }
+        65% { transform: translateY(360%); opacity: 0.85; }
+        75%, 100% { transform: translateY(360%); opacity: 0; }
+      }
+      .anim-photo-scan {
+        animation: scanSweep 5.8s ease-in-out infinite;
+      }
+
+      @keyframes protocolBadgePop {
+        0%, 35% { opacity: 0.45; transform: translateY(4px); }
+        48%, 90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0.45; transform: translateY(4px); }
+      }
+      .anim-protocol-badge {
+        animation: protocolBadgePop 5.8s ease-in-out infinite;
+      }
+    </style>
+  </head>
+
+  <body class="bg-[var(--color-canvas)] text-[var(--color-text-primary)] antialiased transition-colors duration-300">
+    <!-- Navbar ponta a ponta com blur gradual e controles ancorados à direita -->
+    <header
+      id="lp-navbar"
+      class="fixed top-0 inset-x-0 z-50"
+    >
+      <div class="lp-top-bar-backdrop" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto px-5 sm:px-10 h-16 sm:h-[72px] relative z-10 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] gap-3">
+        <a
+          href="#hero-sticky"
+          class="lp-nav-brand lg:justify-self-start font-brand-jp text-xs sm:text-[13px] font-semibold tracking-[0.06em] leading-none whitespace-nowrap shrink-0"
+        >
+          MARÉ <span class="brand-alerta-flow">ALERTA</span>
+        </a>
+
+        <nav
+          aria-label={t.nav.ariaLabel}
+          data-i18n-aria="nav.ariaLabel"
+          class="hidden lg:flex lg:justify-self-center items-center gap-6 xl:gap-10 text-[13px] font-medium"
+        >
+          <a href="#hero-sticky" data-i18n="nav.home" class="lp-nav-link whitespace-nowrap">{t.nav.home}</a>
+          <a href="#sobre" data-i18n="nav.about" class="lp-nav-link whitespace-nowrap">{t.nav.about}</a>
+          <a href="#rotina" data-i18n="nav.features" class="lp-nav-link whitespace-nowrap">{t.nav.features}</a>
+          <a href="#como-funciona" data-i18n="nav.howItWorks" class="lp-nav-link whitespace-nowrap">{t.nav.howItWorks}</a>
+        </nav>
+
+        <div class="lg:justify-self-end flex items-center gap-2 sm:gap-3 shrink-0">
+          <a
+            href="/entrar"
+            data-landing-guest
+            class="lp-nav-link hidden lg:inline-flex items-center gap-1.5 text-[13px] font-medium whitespace-nowrap"
+          >
+            <svg class="w-4 h-4 shrink-0 opacity-85" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" x2="3" y1="12" y2="12" />
+            </svg>
+            <span data-i18n="nav.signIn">{t.nav.signIn}</span>
+          </a>
+
+          <a
+            href="/cadastro"
+            class="btn-water-pill hidden min-[420px]:inline-flex items-center gap-1.5 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-full bg-[oklch(34%_0.155_244)] text-white text-xs sm:text-[13px] font-medium shadow-sm whitespace-nowrap"
+          >
+            <svg class="relative z-10 hidden sm:block w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <line x1="19" x2="19" y1="8" y2="14" />
+              <line x1="22" x2="16" y1="11" y2="11" />
+            </svg>
+            <span class="relative z-10" data-i18n="nav.signUp">{t.nav.signUp}</span>
+          </a>
+
+          <span class="hidden lg:block w-px h-4 bg-current/15 mx-0.5" aria-hidden="true"></span>
+
+          <!-- Utilitários ancorados na extremidade direita para nunca mudarem de posição -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button
+              id="landing-theme-btn"
+              type="button"
+              aria-label={t.nav.themeToggleLabel}
+              aria-pressed="false"
+              title={t.nav.themeToggleLabel}
+              data-i18n-aria="nav.themeToggleLabel"
+              data-i18n-title="nav.themeToggleLabel"
+              class="relative inline-flex items-center justify-center w-8 h-8 cursor-pointer shrink-0 opacity-85 hover:opacity-100 transition-opacity"
+            >
+              <svg id="theme-icon-sun" class="absolute w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2m-7.07-15.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-15.66 6.34 1.41-1.41m11.32-11.32 1.41-1.41" />
+              </svg>
+              <svg id="theme-icon-moon" class="absolute w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            </button>
+
+            <a
+              href={t.altHref}
+              data-lang-switch={t.altLocale}
+              title={t.nav.langSwitchTitle}
+              aria-label={t.nav.langSwitchTitle}
+              data-i18n="currentCode"
+              data-i18n-title="nav.langSwitchTitle"
+              data-i18n-aria="nav.langSwitchTitle"
+              class="lp-nav-link inline-flex items-center justify-center w-7 h-8 font-mono-data text-[11px] font-semibold tracking-wider whitespace-nowrap shrink-0"
+            >
+              {t.currentCode}
+            </a>
+          </div>
+
+          <button
+            id="lp-menu-btn"
+            type="button"
+            aria-expanded="false"
+            aria-controls="lp-mobile-menu"
+            aria-label={t.nav.openMenuLabel}
+            data-i18n-aria="nav.openMenuLabel"
+            class="lg:hidden lp-nav-link inline-flex items-center justify-center w-8 h-8 cursor-pointer shrink-0"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path class="menu-line-1" d="M4 9h16" />
+              <path class="menu-line-2" d="M7 15h13" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Menu Mobile fullscreen editorial (inspirado na referência 015924, cores Maré Alerta) -->
+    <div
+      id="lp-mobile-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t.nav.mobileAriaLabel}
+      data-i18n-aria="nav.mobileAriaLabel"
+      class="fixed inset-0 z-[60] flex flex-col justify-between text-white is-closed lg:hidden"
+    >
+      <div class="border-b border-sky-200/15">
+        <div class="max-w-7xl mx-auto px-5 sm:px-10 h-16 sm:h-[72px] flex items-center justify-between">
+          <a
+            href="#hero-sticky"
+            class="font-brand-jp text-xs sm:text-[13px] font-semibold tracking-[0.06em] leading-none text-white whitespace-nowrap"
+          >
+            MARÉ <span class="brand-alerta-flow">ALERTA</span>
+          </a>
+
+          <button
+            id="lp-menu-close"
+            type="button"
+            aria-label={t.nav.closeMenuLabel}
+            data-i18n-aria="nav.closeMenuLabel"
+            class="inline-flex items-center justify-center w-9 h-9 text-sky-100/80 hover:text-white cursor-pointer transition-colors"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="M6 6 18 18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 flex flex-col justify-center px-5 sm:px-10 py-8 overflow-y-auto">
+        <nav aria-label={t.nav.mobileAriaLabel} data-i18n-aria="nav.mobileAriaLabel" class="flex flex-col max-w-md w-full mx-auto">
+          <a href="#hero-sticky" data-i18n="nav.home" class="lp-mobile-item is-active font-brand-jp uppercase tracking-[0.08em] py-4 sm:py-5 text-2xl sm:text-3xl font-medium">
+            {t.nav.home}
+          </a>
+          <a href="#sobre" data-i18n="nav.about" class="lp-mobile-item font-brand-jp uppercase tracking-[0.08em] py-4 sm:py-5 text-2xl sm:text-3xl font-medium">
+            {t.nav.about}
+          </a>
+          <a href="#rotina" data-i18n="nav.features" class="lp-mobile-item font-brand-jp uppercase tracking-[0.08em] py-4 sm:py-5 text-2xl sm:text-3xl font-medium">
+            {t.nav.features}
+          </a>
+          <a href="#como-funciona" data-i18n="nav.howItWorks" class="lp-mobile-item font-brand-jp uppercase tracking-[0.08em] py-4 sm:py-5 text-2xl sm:text-3xl font-medium">
+            {t.nav.howItWorks}
+          </a>
+        </nav>
+      </div>
+
+      <div class="border-t border-sky-200/12 px-5 sm:px-10 py-6">
+        <div class="max-w-md w-full mx-auto">
+          <div class="grid grid-cols-2 gap-3">
+            <a
+              href="/entrar"
+              data-i18n="nav.signIn"
+              class="inline-flex items-center justify-center px-4 py-3 rounded-full border border-sky-200/25 text-xs font-medium text-sky-50/90 hover:text-white hover:border-sky-200/50 hover:bg-sky-400/10 transition-colors"
+            >
+              {t.nav.signIn}
+            </a>
+            <a
+              href="/cadastro"
+              class="btn-water-pill inline-flex items-center justify-center px-4 py-3 rounded-full bg-[oklch(34%_0.155_244)] text-white text-xs font-medium shadow-sm hover:opacity-95 transition-opacity"
+            >
+              <span class="relative z-10" data-i18n="nav.signUp">{t.nav.signUp}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Véu sutil para salto direto entre seções via navbar (evita engasgos e reversão de #sobre) -->
+    <div
+      id="lp-jump-veil"
+      class="fixed inset-0 z-40 pointer-events-none opacity-0 bg-[oklch(11%_0.036_246)] transition-opacity duration-200 ease-out"
+      aria-hidden="true"
+    ></div>
+
+    <main>
+      <!-- Hero inicial -->
+      <section
+        id="hero-sticky"
+        data-nav-surface="dark"
+        class="relative z-10 flex flex-col overflow-hidden bg-[oklch(8.5%_0.016_246)]"
+      >
+        <picture class="contents">
+          <source media="(max-width: 767px)" type="image/avif" srcset="/images/guajara-orla-mobile.avif" />
+          <source type="image/avif" srcset="/images/guajara-orla.avif" />
+          <source media="(max-width: 767px)" type="image/webp" srcset="/images/guajara-orla-mobile.webp" />
+          <source type="image/webp" srcset="/images/guajara-orla.webp" />
+          <img
+            src="/images/guajara-orla.jpg"
+            alt={t.hero.imgAlt}
+            data-i18n-alt="hero.imgAlt"
+            width="1920"
+            height="1280"
+            fetchpriority="high"
+            loading="eager"
+            decoding="sync"
+            class="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
+            id="hero-bg-img"
+          />
+        </picture>
+
+        <div class="hero-top-scrim absolute inset-x-0 top-0 h-40 pointer-events-none"></div>
+        <div class="hero-theme-veil absolute inset-0 pointer-events-none"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-[oklch(8%_0.022_246/0.72)] via-[oklch(12%_0.030_244/0.22)] to-transparent pointer-events-none"
+        ></div>
+        <div
+          id="hero-scroll-shade"
+          class="absolute inset-0 bg-[oklch(6%_0.020_246)] opacity-0 pointer-events-none will-change-[opacity]"
+          aria-hidden="true"
+        ></div>
+
+        <div class="relative z-10 min-h-dvh w-full flex items-end">
+          <div
+            id="hero-content"
+            class="max-w-7xl w-full mx-auto px-5 sm:px-10 pt-24 pb-12 sm:pt-32 sm:pb-20 lg:pb-24 will-change-transform"
+          >
+            <div class="max-w-2xl space-y-4 sm:space-y-5">
+              <h1 class="font-editorial text-[clamp(2.2rem,6.5vw,4.25rem)] font-medium tracking-tight text-white leading-[1.04]">
+                <span data-i18n="hero.titleLine1">{t.hero.titleLine1}</span>
+                <br />
+                <span data-i18n="hero.titleLine2" class="italic font-normal text-[oklch(84%_0.055_236)]">{t.hero.titleLine2}</span>
+              </h1>
+
+              <p data-i18n="hero.subtitle" class="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal">
+                {t.hero.subtitle}
+              </p>
+
+              <div class="flex flex-wrap items-center gap-3 pt-1 sm:pt-2">
+                <a
+                  href="/cadastro"
+                  class="btn-water-pill inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[oklch(34%_0.125_244)] text-white text-sm font-medium shadow-md"
+                >
+                  <span class="relative z-10" data-i18n="hero.ctaSignUp">{t.hero.ctaSignUp}</span>
+                  <span class="relative z-10" aria-hidden="true">→</span>
+                </a>
+
+                <a
+                  href="#rotina"
+                  data-i18n="hero.ctaFeatures"
+                  class="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-white/25 bg-black/35 backdrop-blur-md text-white text-sm font-medium hover:bg-white/15 transition-colors"
+                >
+                  {t.hero.ctaFeatures}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative w-full h-[clamp(72px,8vh,112px)] pointer-events-none shrink-0" aria-hidden="true">
+          <div class="lp-mist-bottom lp-mist-hero"></div>
+        </div>
+      </section>
+
+      <!-- Seção 2: Mosaico 2x2 de Belém com respiro editorial -->
+      <section
+        id="panorama"
+        class="relative z-20 bg-[var(--color-canvas)] py-16 sm:py-24 transition-colors duration-300"
+      >
+        <div class="max-w-7xl mx-auto px-5 sm:px-10 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div class="group relative aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden bg-[oklch(16%_0.024_246)] flex items-end p-6 sm:p-8 shadow-[0_18px_42px_-16px_rgba(10,24,48,0.22)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.65)] ring-1 ring-black/6 dark:ring-white/10">
+            <picture class="contents">
+              <source media="(max-width: 767px)" type="image/avif" srcset="/images/docas-baia-mobile.avif" />
+              <source type="image/avif" srcset="/images/docas-baia.avif" />
+              <source media="(max-width: 767px)" type="image/webp" srcset="/images/docas-baia-mobile.webp" />
+              <source type="image/webp" srcset="/images/docas-baia.webp" />
+              <img src="/images/docas-baia.jpg" alt={t.panorama.bayAlt} data-i18n-alt="panorama.bayAlt" width="1920" height="1276" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+            </picture>
+            <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[oklch(7%_0.024_246/0.82)] via-[oklch(11%_0.028_244/0.34)] to-transparent pointer-events-none"></div>
+            <span data-i18n="panorama.bayLabel" class="relative z-10 font-editorial text-xl sm:text-2xl md:text-3xl text-white">{t.panorama.bayLabel}</span>
+          </div>
+
+          <div class="group relative aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden bg-[oklch(16%_0.024_246)] flex items-end p-6 sm:p-8 shadow-[0_18px_42px_-16px_rgba(10,24,48,0.22)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.65)] ring-1 ring-black/6 dark:ring-white/10">
+            <picture class="contents">
+              <source media="(max-width: 767px)" type="image/avif" srcset="/images/canal-belem-mobile.avif" />
+              <source type="image/avif" srcset="/images/canal-belem.avif" />
+              <source media="(max-width: 767px)" type="image/webp" srcset="/images/canal-belem-mobile.webp" />
+              <source type="image/webp" srcset="/images/canal-belem.webp" />
+              <img src="/images/canal-belem.jpg" alt={t.panorama.riskAlt} data-i18n-alt="panorama.riskAlt" width="1920" height="1080" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+            </picture>
+            <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[oklch(7%_0.024_246/0.82)] via-[oklch(11%_0.028_244/0.34)] to-transparent pointer-events-none"></div>
+            <span data-i18n="panorama.riskLabel" class="relative z-10 font-editorial text-xl sm:text-2xl md:text-3xl text-white">{t.panorama.riskLabel}</span>
+          </div>
+
+          <div class="group relative aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden bg-[oklch(16%_0.024_246)] flex items-end p-6 sm:p-8 shadow-[0_18px_42px_-16px_rgba(10,24,48,0.22)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.65)] ring-1 ring-black/6 dark:ring-white/10">
+            <picture class="contents">
+              <source media="(max-width: 767px)" type="image/avif" srcset="/images/palafita-igarape-mobile.avif" />
+              <source type="image/avif" srcset="/images/palafita-igarape.avif" />
+              <source media="(max-width: 767px)" type="image/webp" srcset="/images/palafita-igarape-mobile.webp" />
+              <source type="image/webp" srcset="/images/palafita-igarape.webp" />
+              <img src="/images/palafita-igarape.jpg" alt={t.panorama.alertsAlt} data-i18n-alt="panorama.alertsAlt" width="1920" height="1280" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+            </picture>
+            <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[oklch(7%_0.024_246/0.82)] via-[oklch(11%_0.028_244/0.34)] to-transparent pointer-events-none"></div>
+            <span data-i18n="panorama.alertsLabel" class="relative z-10 font-editorial text-xl sm:text-2xl md:text-3xl text-white">{t.panorama.alertsLabel}</span>
+          </div>
+
+          <div class="group relative aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden bg-[oklch(16%_0.024_246)] flex items-end p-6 sm:p-8 shadow-[0_18px_42px_-16px_rgba(10,24,48,0.22)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.65)] ring-1 ring-black/6 dark:ring-white/10">
+            <picture class="contents">
+              <source media="(max-width: 767px)" type="image/avif" srcset="/images/ver-o-peso-noite-mobile.avif" />
+              <source type="image/avif" srcset="/images/ver-o-peso-noite.avif" />
+              <source media="(max-width: 767px)" type="image/webp" srcset="/images/ver-o-peso-noite-mobile.webp" />
+              <source type="image/webp" srcset="/images/ver-o-peso-noite.webp" />
+              <img src="/images/ver-o-peso-noite.jpg" alt={t.panorama.districtsAlt} data-i18n-alt="panorama.districtsAlt" width="1920" height="1280" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+            </picture>
+            <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[oklch(7%_0.024_246/0.82)] via-[oklch(11%_0.028_244/0.34)] to-transparent pointer-events-none"></div>
+            <span data-i18n="panorama.districtsLabel" class="relative z-10 font-editorial text-xl sm:text-2xl md:text-3xl text-white">{t.panorama.districtsLabel}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção 3: #sobre em banda azul oceânico + transição circular amortecida (lerp) -->
+      <section
+        id="sobre"
+        data-nav-surface="dark"
+        class="relative z-20 h-[235dvh] bg-[oklch(11%_0.036_246)]"
+      >
+        <div class="lp-mist-top z-30" aria-hidden="true"></div>
+        <div class="lp-ocean-band sticky top-0 h-dvh w-full transition-colors duration-300">
+          <!-- Camada base em azul oceânico profundo -->
+          <div
+            id="sobre-base-panel"
+            class="absolute inset-0 z-0 flex flex-col justify-center px-5 sm:px-10 pt-32 pb-16 sm:pt-36 sm:pb-20"
+          >
+            <div id="sobre-base-inner" class="max-w-7xl w-full mx-auto space-y-4 sm:space-y-9 will-change-transform">
+              <div class="reveal-item max-w-2xl space-y-2 sm:space-y-3">
+                <h2 data-i18n="sobre.title" class="font-editorial text-2xl min-[400px]:text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white leading-tight">
+                  {t.sobre.title}
+                </h2>
+                <p data-i18n="sobre.subtitle" class="text-xs min-[400px]:text-sm sm:text-base lg:text-lg text-slate-200/85 leading-relaxed">
+                  {t.sobre.subtitle}
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-5">
+                <a
+                  href="/telemetria"
+                  class="reveal-item group relative h-24 min-[400px]:h-28 sm:h-40 md:h-64 lg:h-76 rounded-2xl overflow-hidden border border-white/15 hover:border-sky-300/45 bg-[oklch(10%_0.025_246)] flex items-end p-3.5 sm:p-6 shadow-lg transition-colors"
+                >
+                  <picture class="contents">
+                    <source media="(max-width: 767px)" type="image/avif" srcset="/images/belem-skyline-mobile.avif" />
+                    <source type="image/avif" srcset="/images/belem-skyline.avif" />
+                    <source media="(max-width: 767px)" type="image/webp" srcset="/images/belem-skyline-mobile.webp" />
+                    <source type="image/webp" srcset="/images/belem-skyline.webp" />
+                    <img
+                      src="/images/belem-skyline.jpg"
+                      alt={t.sobre.cards.telemetry.alt}
+                      data-i18n-alt="sobre.cards.telemetry.alt"
+                      width="1920"
+                      height="1280"
+                      loading="lazy"
+                      decoding="async"
+                      class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </picture>
+                  <div class="absolute inset-0 bg-gradient-to-t from-[oklch(7%_0.024_246/0.90)] via-[oklch(12%_0.032_244/0.36)] to-transparent"></div>
+                  <div class="relative z-10 space-y-0.5 sm:space-y-1">
+                    <span data-i18n="sobre.cards.telemetry.title" class="block font-editorial text-xl sm:text-2xl lg:text-3xl tracking-tight text-white">
+                      {t.sobre.cards.telemetry.title}
+                    </span>
+                    <span data-i18n="sobre.cards.telemetry.desc" class="block text-xs text-white/85 line-clamp-2">
+                      {t.sobre.cards.telemetry.desc}
+                    </span>
+                  </div>
+                </a>
+
+                <a
+                  href="/checklist"
+                  class="reveal-item group relative h-24 min-[400px]:h-28 sm:h-40 md:h-64 lg:h-76 rounded-2xl overflow-hidden border border-white/15 hover:border-sky-300/45 bg-[oklch(10%_0.025_246)] flex items-end p-3.5 sm:p-6 shadow-lg transition-colors"
+                >
+                  <picture class="contents">
+                    <source media="(max-width: 767px)" type="image/avif" srcset="/images/sao-jose-liberto-mobile.avif" />
+                    <source type="image/avif" srcset="/images/sao-jose-liberto.avif" />
+                    <source media="(max-width: 767px)" type="image/webp" srcset="/images/sao-jose-liberto-mobile.webp" />
+                    <source type="image/webp" srcset="/images/sao-jose-liberto.webp" />
+                    <img
+                      src="/images/sao-jose-liberto.jpg"
+                      alt={t.sobre.cards.prevention.alt}
+                      data-i18n-alt="sobre.cards.prevention.alt"
+                      width="1920"
+                      height="1280"
+                      loading="lazy"
+                      decoding="async"
+                      class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </picture>
+                  <div class="absolute inset-0 bg-gradient-to-t from-[oklch(7%_0.024_246/0.90)] via-[oklch(12%_0.032_244/0.36)] to-transparent"></div>
+                  <div class="relative z-10 space-y-0.5 sm:space-y-1">
+                    <span data-i18n="sobre.cards.prevention.title" class="block font-editorial text-xl sm:text-2xl lg:text-3xl tracking-tight text-white">
+                      {t.sobre.cards.prevention.title}
+                    </span>
+                    <span data-i18n="sobre.cards.prevention.desc" class="block text-xs text-white/85 line-clamp-2">
+                      {t.sobre.cards.prevention.desc}
+                    </span>
+                  </div>
+                </a>
+
+                <a
+                  href="/ocorrencias"
+                  class="reveal-item group relative h-24 min-[400px]:h-28 sm:h-40 md:h-64 lg:h-76 rounded-2xl overflow-hidden border border-white/15 hover:border-sky-300/45 bg-[oklch(10%_0.025_246)] flex items-end p-3.5 sm:p-6 shadow-lg transition-colors"
+                >
+                  <picture class="contents">
+                    <source media="(max-width: 767px)" type="image/avif" srcset="/images/estacao-docas-mobile.avif" />
+                    <source type="image/avif" srcset="/images/estacao-docas.avif" />
+                    <source media="(max-width: 767px)" type="image/webp" srcset="/images/estacao-docas-mobile.webp" />
+                    <source type="image/webp" srcset="/images/estacao-docas.webp" />
+                    <img
+                      src="/images/estacao-docas.jpg"
+                      alt={t.sobre.cards.protocol.alt}
+                      data-i18n-alt="sobre.cards.protocol.alt"
+                      width="1920"
+                      height="1280"
+                      loading="lazy"
+                      decoding="async"
+                      class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </picture>
+                  <div class="absolute inset-0 bg-gradient-to-t from-[oklch(7%_0.024_246/0.90)] via-[oklch(12%_0.032_244/0.36)] to-transparent"></div>
+                  <div class="relative z-10 space-y-0.5 sm:space-y-1">
+                    <span data-i18n="sobre.cards.protocol.title" class="block font-editorial text-xl sm:text-2xl lg:text-3xl tracking-tight text-white">
+                      {t.sobre.cards.protocol.title}
+                    </span>
+                    <span data-i18n="sobre.cards.protocol.desc" class="block text-xs text-white/85 line-clamp-2">
+                      {t.sobre.cards.protocol.desc}
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Véu escuro interno para profundidade sem vazamento de fundo -->
+            <div
+              id="sobre-base-dim"
+              class="pointer-events-none absolute inset-0 z-20 bg-[oklch(6%_0.018_246)] opacity-0"
+              aria-hidden="true"
+            ></div>
+          </div>
+
+          <!-- Camada sobreposta em revelação circular -->
+          <div
+            id="split-reveal-panel"
+            class="absolute inset-0 z-10 grid grid-cols-1 md:grid-cols-2 bg-[oklch(8%_0.016_246)] will-change-[clip-path]"
+            style="clip-path: circle(0px at 50% 50%); visibility: hidden;"
+          >
+            <div class="relative min-h-[50dvh] md:min-h-full flex items-center justify-center p-6 overflow-hidden">
+              <picture class="contents">
+                <source media="(max-width: 767px)" type="image/avif" srcset="/images/natureza-amazonia-mobile.avif" />
+                <source type="image/avif" srcset="/images/natureza-amazonia.avif" />
+                <source media="(max-width: 767px)" type="image/webp" srcset="/images/natureza-amazonia-mobile.webp" />
+                <source type="image/webp" srcset="/images/natureza-amazonia.webp" />
+                <img
+                  src="/images/natureza-amazonia.jpg"
+                  alt={t.sobre.splitLeftAlt}
+                  data-i18n-alt="sobre.splitLeftAlt"
+                  width="1920"
+                  height="1280"
+                  loading="lazy"
+                  decoding="async"
+                  class="split-reveal-img absolute inset-0 w-full h-full object-cover object-center will-change-transform"
+                />
+              </picture>
+              <div class="absolute inset-0 bg-gradient-to-br from-[oklch(8%_0.018_246/0.46)] to-[oklch(14%_0.040_244/0.30)]"></div>
+              <p data-i18n="sobre.splitLeft" class="relative z-10 text-center font-mono-data uppercase text-sm sm:text-base lg:text-lg font-medium tracking-[0.18em] text-white drop-shadow-md">
+                {t.sobre.splitLeft}
+              </p>
+            </div>
+
+            <div class="relative min-h-[50dvh] md:min-h-full flex items-center justify-center p-6 overflow-hidden border-t md:border-t-0 md:border-l border-white/10">
+              <picture class="contents">
+                <source media="(max-width: 767px)" type="image/avif" srcset="/images/ver-o-peso-noite-mobile.avif" />
+                <source type="image/avif" srcset="/images/ver-o-peso-noite.avif" />
+                <source media="(max-width: 767px)" type="image/webp" srcset="/images/ver-o-peso-noite-mobile.webp" />
+                <source type="image/webp" srcset="/images/ver-o-peso-noite.webp" />
+                <img
+                  src="/images/ver-o-peso-noite.jpg"
+                  alt={t.sobre.splitRightAlt}
+                  data-i18n-alt="sobre.splitRightAlt"
+                  width="1920"
+                  height="1280"
+                  loading="lazy"
+                  decoding="async"
+                  class="split-reveal-img absolute inset-0 w-full h-full object-cover object-center will-change-transform"
+                />
+              </picture>
+              <div class="absolute inset-0 bg-gradient-to-bl from-[oklch(18%_0.062_244/0.46)] to-[oklch(8%_0.020_246/0.32)]"></div>
+              <p data-i18n="sobre.splitRight" class="relative z-10 text-center font-mono-data uppercase text-sm sm:text-base lg:text-lg font-medium tracking-[0.18em] text-white drop-shadow-md">
+                {t.sobre.splitRight}
+              </p>
+            </div>
+          </div>
+
+          <!-- Anel luminoso sincronizado na borda da revelação circular -->
+          <div
+            id="sobre-reveal-ring"
+            class="pointer-events-none absolute left-1/2 top-1/2 z-20 rounded-full border border-[oklch(86%_0.075_230/0.55)] opacity-0 will-change-transform"
+            style="width: 200px; height: 200px; transform: translate(-50%, -50%) scale(0); box-shadow: 0 0 36px oklch(68% 0.13 234 / 0.35), inset 0 0 24px oklch(84% 0.08 228 / 0.18);"
+            aria-hidden="true"
+          ></div>
+        </div>
+        <div class="lp-mist-bottom z-30" aria-hidden="true"></div>
+      </section>
+
+      <section
+        id="rotina"
+        class="relative z-30 bg-[var(--color-canvas)] transition-colors duration-300"
+      >
+        <div class="max-w-7xl mx-auto px-5 sm:px-10 py-16 sm:py-24 space-y-10 sm:space-y-12">
+          <div class="reveal-item max-w-2xl space-y-3">
+            <div class="flex items-center gap-2.5 text-[11px] font-mono-data uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+              <span class="w-4 h-px bg-[var(--color-text-muted)]"></span>
+              <span data-i18n="rotina.eyebrow">{t.rotina.eyebrow}</span>
+            </div>
+            <h2 class="font-editorial text-3xl sm:text-5xl font-medium tracking-[-0.02em] text-[var(--color-text-primary)] leading-[1.06]">
+              <span data-i18n="rotina.titleLine1">{t.rotina.titleLine1}</span>
+              <span data-i18n="rotina.titleLine2" class="block italic font-normal text-[var(--color-text-muted)]">
+                {t.rotina.titleLine2}
+              </span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Card Risco por Bairro (Captura real do Painel) -->
+            <article class="reveal-item routine-card-1 rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col justify-between gap-6 text-white shadow-lg">
+              <button
+                type="button"
+                data-preview-trigger="rotina-risco"
+                data-preview-title={t.rotina.card1.title}
+                aria-label={`Ampliar tela: ${t.rotina.card1.title}`}
+                class="group relative aspect-[16/10] w-full rounded-xl border border-white/15 bg-[oklch(12%_0.028_246)] overflow-hidden shadow-md cursor-zoom-in text-left"
+              >
+                <div class="lp-preview-light w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-risco-light.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-risco-light.webp" />
+                    <img
+                      src="/previews/rotina-risco-light.webp"
+                      alt="Painel de risco por bairro do Maré Alerta exibindo veredito, probabilidade de chuva e maré prevista"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="lp-preview-dark w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-risco-dark.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-risco-dark.webp" />
+                    <img
+                      src="/previews/rotina-risco-dark.webp"
+                      alt="Painel de risco por bairro do Maré Alerta em modo escuro exibindo veredito e indicadores de chuva e maré"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/15 to-transparent"></div>
+                <span class="pointer-events-none absolute right-2.5 bottom-2.5 px-2 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-[10px] font-mono-data uppercase tracking-wider text-white/90 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ampliar
+                </span>
+              </button>
+
+              <div class="space-y-1.5">
+                <h3 data-i18n="rotina.card1.title" class="font-editorial text-xl sm:text-2xl lg:text-[1.65rem] font-medium tracking-tight text-white">
+                  {t.rotina.card1.title}
+                </h3>
+                <p data-i18n="rotina.card1.desc" class="text-xs sm:text-[13px] text-slate-300/80 leading-snug">
+                  {t.rotina.card1.desc}
+                </p>
+              </div>
+            </article>
+
+            <!-- Card Curva de Maré e Chuva (Captura real da Telemetria 24h) -->
+            <article class="reveal-item routine-card-2 rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col justify-between gap-6 text-white shadow-lg">
+              <button
+                type="button"
+                data-preview-trigger="rotina-curva"
+                data-preview-title={t.rotina.card2.title}
+                aria-label={`Ampliar tela: ${t.rotina.card2.title}`}
+                class="group relative aspect-[16/10] w-full rounded-xl border border-white/15 bg-[oklch(12%_0.028_246)] overflow-hidden shadow-md cursor-zoom-in text-left"
+              >
+                <div class="lp-preview-light w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-curva-light.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-curva-light.webp" />
+                    <img
+                      src="/previews/rotina-curva-light.webp"
+                      alt="Gráfico interativo de maré e chuva com faixas segura e de alagamento no Maré Alerta"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="lp-preview-dark w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-curva-dark.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-curva-dark.webp" />
+                    <img
+                      src="/previews/rotina-curva-dark.webp"
+                      alt="Gráfico interativo de maré e chuva em modo escuro no Maré Alerta"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/15 to-transparent"></div>
+                <span class="pointer-events-none absolute right-2.5 bottom-2.5 px-2 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-[10px] font-mono-data uppercase tracking-wider text-white/90 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ampliar
+                </span>
+              </button>
+
+              <div class="space-y-1.5">
+                <h3 data-i18n="rotina.card2.title" class="font-editorial text-xl sm:text-2xl lg:text-[1.65rem] font-medium tracking-tight text-white">
+                  {t.rotina.card2.title}
+                </h3>
+                <p data-i18n="rotina.card2.desc" class="text-xs sm:text-[13px] text-slate-300/80 leading-snug">
+                  {t.rotina.card2.desc}
+                </p>
+              </div>
+            </article>
+
+            <!-- Card Registro com Protocolo (Captura real dos Protocolos) -->
+            <article class="reveal-item routine-card-3 rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col justify-between gap-6 text-white shadow-lg">
+              <button
+                type="button"
+                data-preview-trigger="rotina-protocolo"
+                data-preview-title={t.rotina.card3.title}
+                aria-label={`Ampliar tela: ${t.rotina.card3.title}`}
+                class="group relative aspect-[16/10] w-full rounded-xl border border-white/15 bg-[oklch(12%_0.028_246)] overflow-hidden shadow-md cursor-zoom-in text-left"
+              >
+                <div class="lp-preview-light w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-protocolo-light.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-protocolo-light.webp" />
+                    <img
+                      src="/previews/rotina-protocolo-light.webp"
+                      alt="Lista real de ocorrências registradas e anexos fotográficos no Maré Alerta"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="lp-preview-dark w-full h-full">
+                  <picture class="block w-full h-full">
+                    <source type="image/avif" srcset="/previews/rotina-protocolo-dark.avif" />
+                    <source type="image/webp" srcset="/previews/rotina-protocolo-dark.webp" />
+                    <img
+                      src="/previews/rotina-protocolo-dark.webp"
+                      alt="Lista real de ocorrências registradas em modo escuro no Maré Alerta"
+                      width="1120"
+                      height="700"
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    />
+                  </picture>
+                </div>
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/15 to-transparent"></div>
+                <span class="pointer-events-none absolute right-2.5 bottom-2.5 px-2 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-[10px] font-mono-data uppercase tracking-wider text-white/90 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ampliar
+                </span>
+              </button>
+
+              <div class="space-y-1.5">
+                <h3 data-i18n="rotina.card3.title" class="font-editorial text-xl sm:text-2xl lg:text-[1.65rem] font-medium tracking-tight text-white">
+                  {t.rotina.card3.title}
+                </h3>
+                <p data-i18n="rotina.card3.desc" class="text-xs sm:text-[13px] text-slate-300/80 leading-snug">
+                  {t.rotina.card3.desc}
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção 5: Passo a Passo Completo com alternância azul oceânico <-> claro -->
+      <div id="como-funciona" class="relative z-20 bg-[var(--color-canvas)]">
+        <div
+          id="como-funciona-header"
+          data-nav-surface="dark"
+          class="lp-ocean-band relative min-h-[54svh] sm:min-h-[62svh] flex items-center transition-colors duration-300"
+        >
+          <div class="lp-mist-top" aria-hidden="true"></div>
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-10 py-24 sm:py-32 lg:py-36 flex flex-col md:flex-row md:items-end justify-between gap-8 lg:gap-12">
+            <div class="reveal-item max-w-2xl space-y-4">
+              <div class="flex items-center gap-2.5 text-[11px] font-mono-data uppercase tracking-[0.16em] text-sky-200/80">
+                <span class="w-4 h-px bg-sky-200/50"></span>
+                <span data-i18n="comoFunciona.eyebrow">{t.comoFunciona.eyebrow}</span>
+              </div>
+              <h2 class="font-editorial text-3xl min-[400px]:text-4xl sm:text-5xl lg:text-[3.5rem] font-medium tracking-[-0.02em] text-white leading-[1.05]">
+                <span data-i18n="comoFunciona.titleLine1">{t.comoFunciona.titleLine1}</span>
+                <span data-i18n="comoFunciona.titleLine2" class="block italic font-normal text-sky-200/85 mt-1">
+                  {t.comoFunciona.titleLine2}
+                </span>
+              </h2>
+            </div>
+            <p data-i18n="comoFunciona.subtitle" class="reveal-item text-sm sm:text-base lg:text-lg text-slate-200/85 max-w-md leading-relaxed">
+              {t.comoFunciona.subtitle}
+            </p>
+          </div>
+          <div class="lp-mist-bottom" aria-hidden="true"></div>
+        </div>
+
+        <!-- Passo 1 (Claro em Light mode / Obsidian em Dark mode) -->
+        <section class="bg-[var(--color-canvas)] transition-colors duration-300">
+          <div class="max-w-7xl mx-auto px-5 sm:px-10 py-14 sm:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div class="reveal-item lg:col-span-6">
+              <div class="step-stage lp-tilt-stage relative rounded-3xl p-5 min-[400px]:p-8 sm:p-12 flex flex-col items-center justify-center overflow-hidden border border-[var(--color-border-editorial)] transition-colors duration-300">
+                <button
+                  type="button"
+                  data-preview-trigger="step1-estabelecimento"
+                  data-preview-title={t.comoFunciona.step1.titleLine1}
+                  aria-label="Ampliar tela de cadastro do estabelecimento"
+                  class="phone-bezel lp-tilt-phone w-[min(274px,74vw)] rounded-[40px] sm:rounded-[48px] p-[9px] shrink-0 cursor-zoom-in text-left transition-transform duration-300 ease-out"
+                >
+                  <div class="phone-screen w-full aspect-[390/786] rounded-[35px] sm:rounded-[38px] relative overflow-hidden flex flex-col">
+                    <div class="phone-notch-bar h-6 w-full shrink-0 flex items-center justify-center relative z-20" aria-hidden="true">
+                      <span class="w-2.5 h-2.5 rounded-full bg-black/90 ring-1 ring-white/20"></span>
+                    </div>
+                    <div class="relative flex-1 w-full overflow-hidden">
+                      <div class="lp-preview-light w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step1-estabelecimento-light.avif" />
+                          <source type="image/webp" srcset="/previews/step1-estabelecimento-light.webp" />
+                          <img
+                            src="/previews/step1-estabelecimento-light.webp"
+                            alt="Tela real de cadastro do estabelecimento no aplicativo Maré Alerta em modo claro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                      <div class="lp-preview-dark w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step1-estabelecimento-dark.avif" />
+                          <source type="image/webp" srcset="/previews/step1-estabelecimento-dark.webp" />
+                          <img
+                            src="/previews/step1-estabelecimento-dark.webp"
+                            alt="Tela real de cadastro do estabelecimento no aplicativo Maré Alerta em modo escuro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center" aria-hidden="true">
+                      <span class="w-20 h-1 rounded-full bg-slate-500/45"></span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="reveal-item lg:col-span-6 space-y-4">
+              <span data-i18n="comoFunciona.step1.stepLabel" class="inline-block font-mono-data text-xs uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+                {t.comoFunciona.step1.stepLabel}
+              </span>
+              <h3 class="font-editorial text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[var(--color-text-primary)] leading-[1.08]">
+                <span data-i18n="comoFunciona.step1.titleLine1">{t.comoFunciona.step1.titleLine1}</span>
+                <span data-i18n="comoFunciona.step1.titleLine2" class="block text-[var(--color-text-muted)] font-normal mt-1">
+                  {t.comoFunciona.step1.titleLine2}
+                </span>
+              </h3>
+
+              <p data-i18n="comoFunciona.step1.desc" class="text-sm sm:text-base text-[var(--color-text-secondary)] leading-relaxed max-w-md">
+                {t.comoFunciona.step1.desc}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Passo 2 (Banda azul oceânico profundo em Light e Dark mode) -->
+        <section
+          id="passo-2"
+          data-nav-surface="dark"
+          class="lp-ocean-band relative transition-colors duration-300"
+        >
+          <div class="lp-mist-top" aria-hidden="true"></div>
+          <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-10 py-24 sm:py-32 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div class="reveal-item lg:col-span-6 lg:order-1 order-2 space-y-4">
+              <span data-i18n="comoFunciona.step2.stepLabel" class="inline-block font-mono-data text-xs uppercase tracking-[0.16em] text-sky-200/80">
+                {t.comoFunciona.step2.stepLabel}
+              </span>
+              <h3 class="font-editorial text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white leading-[1.08]">
+                <span data-i18n="comoFunciona.step2.titleLine1">{t.comoFunciona.step2.titleLine1}</span>
+                <span data-i18n="comoFunciona.step2.titleLine2" class="block text-sky-200/80 font-normal mt-1">
+                  {t.comoFunciona.step2.titleLine2}
+                </span>
+              </h3>
+
+              <p data-i18n="comoFunciona.step2.desc" class="text-sm sm:text-base text-slate-200/85 leading-relaxed max-w-md">
+                {t.comoFunciona.step2.desc}
+              </p>
+            </div>
+
+            <div class="reveal-item lg:col-span-6 lg:order-2 order-1">
+              <div class="step-stage lp-tilt-stage relative rounded-3xl p-5 min-[400px]:p-8 sm:p-12 flex flex-col items-center justify-center overflow-hidden border transition-colors duration-300">
+                <button
+                  type="button"
+                  data-preview-trigger="step2-telemetria"
+                  data-preview-title={t.comoFunciona.step2.titleLine1}
+                  aria-label="Ampliar tela de painel em tempo real"
+                  class="phone-bezel lp-tilt-phone w-[min(274px,74vw)] rounded-[40px] sm:rounded-[48px] p-[9px] shrink-0 cursor-zoom-in text-left transition-transform duration-300 ease-out"
+                >
+                  <div class="phone-screen w-full aspect-[390/786] rounded-[35px] sm:rounded-[38px] relative overflow-hidden flex flex-col">
+                    <div class="phone-notch-bar h-6 w-full shrink-0 flex items-center justify-center relative z-20" aria-hidden="true">
+                      <span class="w-2.5 h-2.5 rounded-full bg-black/90 ring-1 ring-white/20"></span>
+                    </div>
+                    <div class="relative flex-1 w-full overflow-hidden">
+                      <div class="lp-preview-light w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step2-telemetria-light.avif" />
+                          <source type="image/webp" srcset="/previews/step2-telemetria-light.webp" />
+                          <img
+                            src="/previews/step2-telemetria-light.webp"
+                            alt="Painel móvel em tempo real do Maré Alerta em modo claro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                      <div class="lp-preview-dark w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step2-telemetria-dark.avif" />
+                          <source type="image/webp" srcset="/previews/step2-telemetria-dark.webp" />
+                          <img
+                            src="/previews/step2-telemetria-dark.webp"
+                            alt="Painel móvel em tempo real do Maré Alerta em modo escuro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center" aria-hidden="true">
+                      <span class="w-20 h-1 rounded-full bg-slate-500/45"></span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="lp-mist-bottom" aria-hidden="true"></div>
+        </section>
+
+        <!-- Passo 3 (Claro em Light mode / Obsidian em Dark mode) -->
+        <section class="bg-[var(--color-canvas)] transition-colors duration-300">
+          <div class="max-w-7xl mx-auto px-5 sm:px-10 py-14 sm:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div class="reveal-item lg:col-span-6">
+              <div class="step-stage lp-tilt-stage relative rounded-3xl p-5 min-[400px]:p-8 sm:p-12 flex flex-col items-center justify-center overflow-hidden border border-[var(--color-border-editorial)] transition-colors duration-300">
+                <button
+                  type="button"
+                  data-preview-trigger="step3-ocorrencias"
+                  data-preview-title={t.comoFunciona.step3.titleLine1}
+                  aria-label="Ampliar tela de registro de ocorrência"
+                  class="phone-bezel lp-tilt-phone w-[min(274px,74vw)] rounded-[40px] sm:rounded-[48px] p-[9px] shrink-0 cursor-zoom-in text-left transition-transform duration-300 ease-out"
+                >
+                  <div class="phone-screen w-full aspect-[390/786] rounded-[35px] sm:rounded-[38px] relative overflow-hidden flex flex-col">
+                    <div class="phone-notch-bar h-6 w-full shrink-0 flex items-center justify-center relative z-20" aria-hidden="true">
+                      <span class="w-2.5 h-2.5 rounded-full bg-black/90 ring-1 ring-white/20"></span>
+                    </div>
+                    <div class="relative flex-1 w-full overflow-hidden">
+                      <div class="lp-preview-light w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step3-ocorrencias-light.avif" />
+                          <source type="image/webp" srcset="/previews/step3-ocorrencias-light.webp" />
+                          <img
+                            src="/previews/step3-ocorrencias-light.webp"
+                            alt="Tela real de registro rápido de ocorrência no Maré Alerta em modo claro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                      <div class="lp-preview-dark w-full h-full">
+                        <picture class="block w-full h-full">
+                          <source type="image/avif" srcset="/previews/step3-ocorrencias-dark.avif" />
+                          <source type="image/webp" srcset="/previews/step3-ocorrencias-dark.webp" />
+                          <img
+                            src="/previews/step3-ocorrencias-dark.webp"
+                            alt="Tela real de registro rápido de ocorrência no Maré Alerta em modo escuro"
+                            width="780"
+                            height="1512"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover object-top"
+                          />
+                        </picture>
+                      </div>
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center" aria-hidden="true">
+                      <span class="w-20 h-1 rounded-full bg-slate-500/45"></span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="reveal-item lg:col-span-6 space-y-4">
+              <span data-i18n="comoFunciona.step3.stepLabel" class="inline-block font-mono-data text-xs uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+                {t.comoFunciona.step3.stepLabel}
+              </span>
+              <h3 class="font-editorial text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[var(--color-text-primary)] leading-[1.08]">
+                <span data-i18n="comoFunciona.step3.titleLine1">{t.comoFunciona.step3.titleLine1}</span>
+                <span data-i18n="comoFunciona.step3.titleLine2" class="block text-[var(--color-text-muted)] font-normal mt-1">
+                  {t.comoFunciona.step3.titleLine2}
+                </span>
+              </h3>
+
+              <p data-i18n="comoFunciona.step3.desc" class="text-sm sm:text-base text-[var(--color-text-secondary)] leading-relaxed max-w-md">
+                {t.comoFunciona.step3.desc}
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Chamada final minimalista em azul oceânico profundo integrada ao rodapé -->
+      <section data-nav-surface="dark" class="final-cta-stage relative z-20 min-h-[58svh] sm:min-h-[64svh] flex flex-col items-center justify-center px-5 sm:px-10 pt-28 pb-20 sm:pt-36 sm:pb-28 text-center text-white">
+        <div class="lp-mist-top" aria-hidden="true"></div>
+        <div class="reveal-item relative z-10 max-w-2xl mx-auto space-y-7">
+          <h2 class="font-editorial text-4xl sm:text-6xl lg:text-[4rem] font-medium tracking-tight leading-[1.03] text-white">
+            <span data-i18n="finalCta.titleLine1">{t.finalCta.titleLine1}</span>
+            <br />
+            <span data-i18n="finalCta.titleLine2">{t.finalCta.titleLine2}</span>
+          </h2>
+
+          <div class="flex justify-center">
+            <a
+              href="/cadastro"
+              data-i18n="finalCta.ctaGuest"
+              class="inline-flex items-center justify-center px-8 py-3.5 rounded-md bg-white text-[oklch(14%_0.030_246)] text-sm font-semibold shadow-lg hover:bg-slate-100 transition-colors"
+            >
+              {t.finalCta.ctaGuest}
+            </a>
+          </div>
+
+          <p class="text-[11px] sm:text-xs text-slate-300/75 leading-relaxed max-w-xl mx-auto">
+            <span data-i18n="finalCta.footnoteLine1">{t.finalCta.footnoteLine1}</span>
+            <br />
+            <span data-i18n="finalCta.footnoteLine2">{t.finalCta.footnoteLine2}</span>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Rodapé editorial equilibrado em 3 colunas no fechamento oceânico -->
+    <footer data-nav-surface="dark" class="lp-ocean-footer relative z-20 border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-5 sm:px-10 py-7 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-center md:text-left">
+        <div class="md:justify-self-start">
+          <a href="#hero-sticky" class="font-brand-jp text-xs sm:text-[13px] font-semibold tracking-[0.06em] text-white">
+            MARÉ <span class="brand-alerta-flow">ALERTA</span>
+          </a>
+        </div>
+
+        <nav aria-label={t.footer.ariaLabel} data-i18n-aria="footer.ariaLabel" class="md:justify-self-center flex flex-wrap items-center justify-center gap-5 sm:gap-7 text-xs sm:text-sm font-medium text-slate-300/80">
+          <a href="#hero-sticky" data-i18n="footer.home" class="hover:text-white transition-colors">{t.footer.home}</a>
+          <a href="#sobre" data-i18n="footer.about" class="hover:text-white transition-colors">{t.footer.about}</a>
+          <a href="#rotina" data-i18n="footer.features" class="hover:text-white transition-colors">{t.footer.features}</a>
+          <a href="#como-funciona" data-i18n="footer.howItWorks" class="hover:text-white transition-colors">{t.footer.howItWorks}</a>
+        </nav>
+
+        <div class="md:justify-self-end">
+          <span data-i18n="footer.copyright" class="text-xs text-slate-400">
+            {t.footer.copyright}
+          </span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal interativo para explorar as telas reais do sistema em detalhe -->
+    <div
+      id="lp-preview-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lp-preview-modal-title"
+      class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center"
+    >
+      <div class="relative w-full max-w-4xl max-h-[92dvh] rounded-2xl bg-[oklch(16%_0.014_244)] border border-white/15 p-4 sm:p-5 flex flex-col gap-3.5 text-white shadow-2xl">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 id="lp-preview-modal-title" class="font-editorial text-lg sm:text-xl font-medium text-white"></h3>
+          <div class="flex items-center gap-2">
+            <button
+              id="lp-preview-theme-toggle"
+              type="button"
+              class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
+            >
+              Alternar Claro / Escuro
+            </button>
+            <button
+              id="lp-preview-close"
+              type="button"
+              aria-label="Fechar visualização"
+              class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 inline-flex items-center justify-center text-white transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div class="overflow-auto flex items-center justify-center rounded-xl bg-black/30 p-2 sm:p-4">
+          <img
+            id="lp-preview-modal-img"
+            src=""
+            alt=""
+            class="max-h-[74dvh] w-auto max-w-full rounded-lg object-contain"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script id="lp-i18n-data" type="application/json" set:html={JSON.stringify(landingCopy)} />
+
+    <script is:inline>
+      (function () {
+        var navbar = document.getElementById('lp-navbar');
+        var jumpVeil = document.getElementById('lp-jump-veil');
+        var menuBtn = document.getElementById('lp-menu-btn');
+        var menuCloseBtn = document.getElementById('lp-menu-close');
+        var mobileMenu = document.getElementById('lp-mobile-menu');
+        var mobileNavItems = document.querySelectorAll('.lp-mobile-item');
+        var trackedSections = ['#hero-sticky', '#sobre', '#rotina', '#como-funciona']
+          .map(function (sel) { return document.querySelector(sel); })
+          .filter(Boolean);
+        var heroContent = document.getElementById('hero-content');
+        var heroBg = document.getElementById('hero-bg-img');
+        var heroScrollShade = document.getElementById('hero-scroll-shade');
+        var sobreSection = document.getElementById('sobre');
+        var sobreBasePanel = document.getElementById('sobre-base-panel');
+        var sobreBaseInner = document.getElementById('sobre-base-inner');
+        var sobreBaseDim = document.getElementById('sobre-base-dim');
+        var splitRevealPanel = document.getElementById('split-reveal-panel');
+        var sobreRevealRing = document.getElementById('sobre-reveal-ring');
+        var splitImgs = splitRevealPanel ? splitRevealPanel.querySelectorAll('.split-reveal-img') : [];
+        var darkSurfaceBands = document.querySelectorAll('[data-nav-surface="dark"]');
+        var metaTheme = document.getElementById('meta-theme-color');
+        var themeBtn = document.getElementById('landing-theme-btn');
+        var reducedMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+        var targetReveal = 0;
+        var currentReveal = 0;
+        var firstPaint = true;
+        var rafHandle = 0;
+        var lastTs = 0;
+        var activeJumpId = 0;
+
+        // Troca fluida de idioma no cliente sem recarregar a página ou perder a posição do scroll
+        var i18nStore = null;
+        try {
+          var i18nEl = document.getElementById('lp-i18n-data');
+          if (i18nEl && i18nEl.textContent) {
+            i18nStore = JSON.parse(i18nEl.textContent);
+          }
+        } catch (e) {}
+
+        function resolveKey(obj, path) {
+          var parts = path.split('.');
+          var cur = obj;
+          for (var i = 0; i < parts.length; i++) {
+            if (cur == null) return undefined;
+            cur = cur[parts[i]];
+          }
+          return cur;
+        }
+
+        function applyLanguage(nextLocale) {
+          if (!i18nStore || !i18nStore[nextLocale]) return false;
+          var copy = i18nStore[nextLocale];
+          var prefersReduced = reducedMotionQuery ? reducedMotionQuery.matches : false;
+
+          var swapTexts = function () {
+            document.documentElement.lang = copy.htmlLang;
+            document.title = copy.meta.title;
+
+            var metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', copy.meta.description);
+
+            var metaOgLocale = document.querySelector('meta[property="og:locale"]');
+            if (metaOgLocale) metaOgLocale.setAttribute('content', copy.ogLocale);
+
+            document.querySelectorAll('[data-i18n]').forEach(function (el) {
+              var val = resolveKey(copy, el.getAttribute('data-i18n'));
+              if (typeof val === 'string') el.textContent = val;
+            });
+
+            document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+              var val = resolveKey(copy, el.getAttribute('data-i18n-alt'));
+              if (typeof val === 'string') el.setAttribute('alt', val);
+            });
+
+            document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+              var val = resolveKey(copy, el.getAttribute('data-i18n-aria'));
+              if (typeof val === 'string') el.setAttribute('aria-label', val);
+            });
+
+            document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+              var val = resolveKey(copy, el.getAttribute('data-i18n-title'));
+              if (typeof val === 'string') el.setAttribute('title', val);
+            });
+
+            document.querySelectorAll('[data-lang-switch]').forEach(function (el) {
+              el.setAttribute('data-lang-switch', copy.altLocale);
+              el.setAttribute('href', copy.altHref);
+            });
+
+            try { localStorage.setItem('mare-alerta-lang', nextLocale); } catch (e) {}
+
+            var targetPath = nextLocale === 'en' ? '/en/' : '/';
+            try {
+              if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, '', targetPath + window.location.hash);
+              }
+            } catch (e) {}
+          };
+
+          if (prefersReduced) {
+            swapTexts();
+            return true;
+          }
+
+          document.documentElement.classList.add('is-switching-lang');
+          window.setTimeout(function () {
+            swapTexts();
+            window.requestAnimationFrame(function () {
+              document.documentElement.classList.remove('is-switching-lang');
+            });
+          }, 90);
+
+          return true;
+        }
+
+        document.querySelectorAll('[data-lang-switch]').forEach(function (el) {
+          el.addEventListener('click', function (ev) {
+            if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
+            var nextLang = el.getAttribute('data-lang-switch');
+            if (nextLang && applyLanguage(nextLang)) {
+              ev.preventDefault();
+            }
+          });
+        });
+
+        function jumpToSection(target) {
+          var currentY = window.scrollY || 0;
+          var vh = window.innerHeight || 800;
+          var targetTop = target.id === 'hero-sticky'
+            ? 0
+            : Math.max(0, Math.round(target.getBoundingClientRect().top + currentY));
+
+          if (Math.abs(targetTop - currentY) < 24) return;
+
+          var prefersReduced = reducedMotionQuery ? reducedMotionQuery.matches : false;
+          var crossesSobre = false;
+          if (sobreSection) {
+            var sTop = sobreSection.offsetTop;
+            var sBottom = sTop + sobreSection.offsetHeight;
+            var minY = Math.min(currentY, targetTop);
+            var maxY = Math.max(currentY, targetTop);
+            crossesSobre = maxY > sTop + vh * 0.16 && minY < sBottom - vh * 0.12;
+          }
+
+          if (prefersReduced) {
+            window.scrollTo({ top: targetTop, behavior: 'auto' });
+            firstPaint = true;
+            tickFrame(performance.now());
+            return;
+          }
+
+          // Salto curto sem cruzar #sobre: rolagem suave nativa
+          if (!crossesSobre && Math.abs(targetTop - currentY) <= vh * 1.25) {
+            window.scrollTo({ top: targetTop, behavior: 'smooth' });
+            return;
+          }
+
+          // Salto longo ou cruzando #sobre: dissolve suavemente sem animação reversa ou travamento
+          var myJumpId = ++activeJumpId;
+          if (jumpVeil) {
+            jumpVeil.style.transitionDuration = '140ms';
+            jumpVeil.style.opacity = '1';
+          }
+
+          window.setTimeout(function () {
+            if (myJumpId !== activeJumpId) return;
+            window.scrollTo({ top: targetTop, behavior: 'auto' });
+
+            document.querySelectorAll('.reveal-item:not(.is-visible)').forEach(function (item) {
+              var rect = item.getBoundingClientRect();
+              if (rect.top < vh * 1.05 && rect.bottom > 0) {
+                item.classList.add('is-visible');
+              }
+            });
+
+            firstPaint = true;
+            tickFrame(performance.now());
+
+            window.requestAnimationFrame(function () {
+              if (myJumpId !== activeJumpId) return;
+              if (jumpVeil) {
+                jumpVeil.style.transitionDuration = '240ms';
+                jumpVeil.style.opacity = '0';
+              }
+            });
+          }, 145);
+        }
+
+        function updateActiveNavLink() {
+          if (!mobileNavItems.length || !trackedSections.length) return;
+          var vh = window.innerHeight || 800;
+          var probeOffset = Math.max(96, Math.round(vh * 0.35));
+          var activeId = trackedSections[0].id;
+          for (var i = 0; i < trackedSections.length; i++) {
+            var sec = trackedSections[i];
+            if (sec.getBoundingClientRect().top <= probeOffset) {
+              activeId = sec.id;
+            }
+          }
+          mobileNavItems.forEach(function (item) {
+            item.classList.toggle('is-active', item.getAttribute('href') === '#' + activeId);
+          });
+        }
+
+        function setMobileMenu(open) {
+          if (!mobileMenu || !menuBtn) return;
+          mobileMenu.classList.toggle('is-open', open);
+          mobileMenu.classList.toggle('is-closed', !open);
+          menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          document.documentElement.style.overflow = open ? 'hidden' : '';
+          if (open) updateActiveNavLink();
+        }
+
+        document.querySelectorAll('a[href="#hero-sticky"], a[href="#sobre"], a[href="#rotina"], a[href="#como-funciona"]').forEach(function (anchor) {
+          anchor.addEventListener('click', function (ev) {
+            var href = anchor.getAttribute('href');
+            var target = href ? document.querySelector(href) : null;
+            if (!target) return;
+            ev.preventDefault();
+            setMobileMenu(false);
+            jumpToSection(target);
+          });
+        });
+
+        if (menuBtn && mobileMenu) {
+          menuBtn.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            var isOpen = mobileMenu.classList.contains('is-open');
+            setMobileMenu(!isOpen);
+          });
+          if (menuCloseBtn) {
+            menuCloseBtn.addEventListener('click', function () {
+              setMobileMenu(false);
+            });
+          }
+          mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              setMobileMenu(false);
+            });
+          });
+          document.addEventListener('click', function (ev) {
+            if (!mobileMenu.classList.contains('is-open')) return;
+            if (!mobileMenu.contains(ev.target) && !menuBtn.contains(ev.target)) {
+              setMobileMenu(false);
+            }
+          });
+          document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') setMobileMenu(false);
+          });
+        }
+
+        function computeTargetReveal(vh) {
+          if (!sobreSection) return 0;
+          var sobreRect = sobreSection.getBoundingClientRect();
+          var sScrollable = Math.max(sobreSection.offsetHeight - vh, 1);
+          var rawProgress = -sobreRect.top / sScrollable;
+          return Math.min(Math.max((rawProgress - 0.16) / 0.66, 0), 1);
+        }
+
+        function updateNavbarContrast(theme) {
+          if (!navbar) return;
+          if (theme === 'dark') {
+            navbar.classList.remove('lp-navbar-on-light');
+            return;
+          }
+
+          var probeY = 36;
+          var overDark = false;
+          for (var i = 0; i < darkSurfaceBands.length; i++) {
+            var band = darkSurfaceBands[i];
+            var rect = band.getBoundingClientRect();
+            var isFooterBand = band.classList.contains('final-cta-stage') || band.classList.contains('lp-ocean-footer');
+            var topInset = band.id === 'hero-sticky' || band.classList.contains('lp-ocean-footer') ? 0 : 36;
+            var bottomInset = isFooterBand ? 0 : 44;
+            if (rect.top + topInset <= probeY && rect.bottom - bottomInset > probeY) {
+              overDark = true;
+              break;
+            }
+          }
+
+          navbar.classList.toggle('lp-navbar-on-light', !overDark);
+        }
+
+        function renderSobreFrame(prefersReduced, vw, vh) {
+          if (!sobreSection || !splitRevealPanel) return;
+
+          if (prefersReduced) {
+            var snapped = targetReveal >= 0.5 ? 1 : 0;
+            splitRevealPanel.style.visibility = snapped ? 'visible' : 'hidden';
+            splitRevealPanel.style.clipPath = snapped ? 'none' : 'circle(0px at 50% 50%)';
+            if (sobreBaseInner) sobreBaseInner.style.transform = 'none';
+            if (sobreBasePanel) sobreBasePanel.style.visibility = snapped ? 'hidden' : 'visible';
+            if (sobreBaseDim) sobreBaseDim.style.opacity = '0';
+            if (sobreRevealRing) sobreRevealRing.style.opacity = '0';
+            splitImgs.forEach(function (img) {
+              img.style.transform = 'none';
+            });
+            return;
+          }
+
+          var eased =
+            currentReveal < 0.5
+              ? 2 * currentReveal * currentReveal
+              : 1 - Math.pow(-2 * currentReveal + 2, 2) / 2;
+
+          if (eased <= 0.001) {
+            splitRevealPanel.style.visibility = 'hidden';
+            splitRevealPanel.style.clipPath = 'circle(0px at 50% 50%)';
+          } else {
+            splitRevealPanel.style.visibility = 'visible';
+            var maxRadiusPx = Math.hypot(vw * 0.5, vh * 0.5) + 6;
+            var rPx = eased * maxRadiusPx;
+            if (eased >= 0.996) {
+              splitRevealPanel.style.clipPath = 'none';
+            } else {
+              splitRevealPanel.style.clipPath = 'circle(' + rPx.toFixed(1) + 'px at 50% 50%)';
+            }
+
+            if (sobreRevealRing) {
+              var scaleRatio = (rPx * 2) / 200;
+              var ringOpacity = 0;
+              if (eased > 0.01 && eased < 0.96) {
+                var fadeIn = Math.min(eased / 0.10, 1);
+                var fadeOut = Math.min((0.96 - eased) / 0.16, 1);
+                ringOpacity = 0.85 * fadeIn * fadeOut;
+              }
+              sobreRevealRing.style.transform = 'translate(-50%, -50%) scale(' + scaleRatio.toFixed(4) + ')';
+              sobreRevealRing.style.opacity = ringOpacity.toFixed(3);
+            }
+          }
+
+          if (eased <= 0.001 && sobreRevealRing) {
+            sobreRevealRing.style.opacity = '0';
+          }
+
+          var imgScale = 1.06 - eased * 0.06;
+          splitImgs.forEach(function (img) {
+            img.style.transform = 'scale(' + imgScale.toFixed(4) + ')';
+          });
+
+          if (sobreBaseInner) {
+            var baseScale = 1 - eased * 0.035;
+            sobreBaseInner.style.transform = 'scale(' + baseScale.toFixed(4) + ')';
+          }
+          if (sobreBasePanel) {
+            sobreBasePanel.style.visibility = eased >= 0.995 ? 'hidden' : 'visible';
+          }
+          if (sobreBaseDim) {
+            sobreBaseDim.style.opacity = (eased * 0.55).toFixed(3);
+          }
+        }
+
+        function tickFrame(now) {
+          /* Fase 1: leituras geométricas em lote para evitar layout thrashing */
+          var currentY = window.scrollY || 0;
+          var vw = document.documentElement.clientWidth || window.innerWidth || 1280;
+          var vh = window.innerHeight || 800;
+          var prefersReduced = reducedMotionQuery ? reducedMotionQuery.matches : false;
+          var dt = lastTs ? Math.min(Math.max((now - lastTs) / 16.667, 0.2), 3) : 1;
+          lastTs = now;
+          var themeNow = document.documentElement.getAttribute('data-theme') || 'light';
+
+          targetReveal = computeTargetReveal(vh);
+
+          if (prefersReduced || firstPaint) {
+            currentReveal = targetReveal;
+            firstPaint = false;
+          } else {
+            var diff = targetReveal - currentReveal;
+            if (Math.abs(diff) <= 0.0006) {
+              currentReveal = targetReveal;
+            } else {
+              var alpha = 1 - Math.pow(1 - 0.075, dt);
+              var delta = diff * alpha;
+              var maxStep = 0.015 * dt;
+              if (Math.abs(delta) > maxStep) {
+                delta = (delta > 0 ? 1 : -1) * maxStep;
+              }
+              currentReveal += delta;
+            }
+          }
+
+          updateNavbarContrast(themeNow);
+          if (vw >= 1024 && mobileMenu && mobileMenu.classList.contains('is-open')) {
+            setMobileMenu(false);
+          } else {
+            updateActiveNavLink();
+          }
+
+          /* Fase 2: escritas visuais em lote na GPU */
+          var heroProgress = Math.min(Math.max(currentY / (vh * 0.85), 0), 1);
+          if (heroContent) {
+            heroContent.style.opacity = prefersReduced ? '1' : String(1 - heroProgress * 0.85);
+            heroContent.style.transform = prefersReduced ? 'none' : 'translateY(' + (-heroProgress * 24).toFixed(1) + 'px)';
+          }
+          if (heroBg) {
+            heroBg.style.transform = prefersReduced ? 'none' : 'scale(' + (1 + heroProgress * 0.05).toFixed(4) + ')';
+          }
+          if (heroScrollShade) {
+            heroScrollShade.style.opacity = prefersReduced ? '0' : (heroProgress * 0.38).toFixed(3);
+          }
+
+          renderSobreFrame(prefersReduced, vw, vh);
+
+          if (!prefersReduced && Math.abs(targetReveal - currentReveal) > 0.0006) {
+            rafHandle = window.requestAnimationFrame(tickFrame);
+          } else {
+            rafHandle = 0;
+            lastTs = 0;
+          }
+        }
+
+        function requestEffects() {
+          if (!rafHandle) {
+            rafHandle = window.requestAnimationFrame(tickFrame);
+          }
+        }
+
+        function syncThemeControls(theme) {
+          var isDark = theme === 'dark';
+          if (themeBtn) themeBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+          if (metaTheme) metaTheme.setAttribute('content', isDark ? '#0d131f' : '#f4f6f9');
+        }
+
+        function applyLandingTheme(next, useTransition) {
+          var commit = function () {
+            document.documentElement.setAttribute('data-theme', next);
+            try { localStorage.setItem('mare-alerta-theme', next); } catch (e) {}
+            syncThemeControls(next);
+            updateNavbarContrast(next);
+          };
+
+          var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (useTransition && !reduceMotion && typeof document.startViewTransition === 'function') {
+            document.documentElement.classList.add('is-theme-switching');
+            var vt = document.startViewTransition(function () {
+              commit();
+            });
+            vt.finished.finally(function () {
+              document.documentElement.classList.remove('is-theme-switching');
+            });
+            return;
+          }
+
+          commit();
+        }
+
+        syncThemeControls(document.documentElement.getAttribute('data-theme') || 'light');
+
+        if (themeBtn) {
+          themeBtn.addEventListener('click', function () {
+            var cur = document.documentElement.getAttribute('data-theme') || 'light';
+            var next = cur === 'dark' ? 'light' : 'dark';
+            applyLandingTheme(next, true);
+          });
+        }
+
+        var colorSchemeQuery = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)')
+          : null;
+        if (colorSchemeQuery) {
+          var onSystemThemeChange = function (ev) {
+            var hasManual = false;
+            try {
+              var saved = localStorage.getItem('mare-alerta-theme');
+              hasManual = saved === 'dark' || saved === 'light';
+            } catch (e) {}
+            if (hasManual) return;
+            var next = ev.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            syncThemeControls(next);
+            updateNavbarContrast(next);
+          };
+          if (typeof colorSchemeQuery.addEventListener === 'function') {
+            colorSchemeQuery.addEventListener('change', onSystemThemeChange);
+          } else if (typeof colorSchemeQuery.addListener === 'function') {
+            colorSchemeQuery.addListener(onSystemThemeChange);
+          }
+        }
+
+        // Interação nos previews reais (Lightbox com troca Claro/Escuro + tilt suave nos smartphones)
+        var previewModal = document.getElementById('lp-preview-modal');
+        var previewModalTitle = document.getElementById('lp-preview-modal-title');
+        var previewModalImg = document.getElementById('lp-preview-modal-img');
+        var previewThemeBtn = document.getElementById('lp-preview-theme-toggle');
+        var previewCloseBtn = document.getElementById('lp-preview-close');
+        var currentPreviewBase = '';
+        var currentPreviewMode = 'light';
+
+        function syncModalImage() {
+          if (!previewModalImg || !currentPreviewBase) return;
+          previewModalImg.setAttribute('src', '/previews/' + currentPreviewBase + '-' + currentPreviewMode + '.webp');
+        }
+
+        function openPreviewModal(base, title) {
+          if (!previewModal || !previewModalTitle || !previewModalImg) return;
+          currentPreviewBase = base;
+          currentPreviewMode = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'dark' : 'light';
+          previewModalTitle.textContent = title || 'Visualização do sistema';
+          previewModalImg.setAttribute('alt', title || 'Tela do sistema Maré Alerta');
+          syncModalImage();
+          previewModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closePreviewModal() {
+          if (!previewModal) return;
+          previewModal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('[data-preview-trigger]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var base = btn.getAttribute('data-preview-trigger') || '';
+            var title = btn.getAttribute('data-preview-title') || '';
+            if (base) openPreviewModal(base, title);
+          });
+        });
+
+        if (previewThemeBtn) {
+          previewThemeBtn.addEventListener('click', function () {
+            currentPreviewMode = currentPreviewMode === 'dark' ? 'light' : 'dark';
+            syncModalImage();
+          });
+        }
+        if (previewCloseBtn) previewCloseBtn.addEventListener('click', closePreviewModal);
+        if (previewModal) {
+          previewModal.addEventListener('click', function (ev) {
+            if (ev.target === previewModal) closePreviewModal();
+          });
+        }
+        document.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Escape' && previewModal && !previewModal.classList.contains('hidden')) {
+            closePreviewModal();
+          }
+        });
+
+        if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+          document.querySelectorAll('.lp-tilt-stage').forEach(function (stage) {
+            var phone = stage.querySelector('.lp-tilt-phone');
+            if (!phone) return;
+            stage.addEventListener('pointermove', function (ev) {
+              var rect = stage.getBoundingClientRect();
+              var rx = ((ev.clientY - rect.top) / rect.height - 0.5) * -6;
+              var ry = ((ev.clientX - rect.left) / rect.width - 0.5) * 6;
+              phone.style.transform = 'perspective(900px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+            });
+            stage.addEventListener('pointerleave', function () {
+              phone.style.transform = '';
+            });
+          });
+        }
+
+        window.addEventListener('scroll', requestEffects, { passive: true });
+        window.addEventListener('resize', requestEffects, { passive: true });
+        tickFrame(performance.now());
+
+        // Revelar elementos suavemente quando entram no campo de visão
+        var revealNodes = document.querySelectorAll('.reveal-item');
+        if ('IntersectionObserver' in window && revealNodes.length) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          revealNodes.forEach(function (el) { io.observe(el); });
+        } else {
+          revealNodes.forEach(function (el) { el.classList.add('is-visible'); });
+        }
+
+        // Reflexo líquido direcionado pelo ponteiro nos botões
+        document.querySelectorAll('.btn-water-pill').forEach(function (pill) {
+          pill.addEventListener('pointermove', function (ev) {
+            var rect = pill.getBoundingClientRect();
+            pill.style.setProperty('--mx', (ev.clientX - rect.left) + 'px');
+            pill.style.setProperty('--my', (ev.clientY - rect.top) + 'px');
+          });
+        });
+
+        // Em localhost, desregistra SW e limpa caches; em produção, registra /sw.js
+        if ('serviceWorker' in navigator) {
+          var isLocal =
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
+          if (isLocal) {
+            navigator.serviceWorker
+              .getRegistrations()
+              .then(function (regs) {
+                regs.forEach(function (reg) {
+                  reg.unregister();
+                });
+              })
+              .catch(function () {});
+            if ('caches' in window) {
+              caches
+                .keys()
+                .then(function (keys) {
+                  keys.forEach(function (k) {
+                    caches.delete(k);
+                  });
+                })
+                .catch(function () {});
+            }
+          } else {
+            window.addEventListener('load', function () {
+              navigator.serviceWorker.register('/sw.js').catch(function () {});
+            });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
